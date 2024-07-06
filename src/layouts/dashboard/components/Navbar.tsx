@@ -22,6 +22,7 @@ import { BsChevronCompactRight, } from "react-icons/bs";
 import { useContext } from "react";
 import { ColorModeContext } from "@/app/hooks/useDarkMode";
 import { BreadCrumbItem } from "@/shared/types/navigation";
+import { GetDataLingoLearn, GetDecodedJwt } from "@/shared/hooks/useAuth";
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
@@ -182,27 +183,27 @@ export default function Navbar({
                   </Badge>
                 </IconButton>
 
-                <Tooltip title="Open settings">
-                  <Box display={"flex"} alignItems={"center"} gap="10px">
-                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                      <Avatar alt="Remy Sharp" src="/user.jpg" />
-                    </IconButton>
-                    <Box
-                      sx={{
-                        display: {
-                          xs: "none",
-                          md: "flex",
-                        },
-                        flexDirection: "column",
-                      }}
-                    >
-                      <Typography>User Name</Typography>
-                      <Typography fontSize={10} color="GrayText">
-                        Admin
-                      </Typography>
-                    </Box>
+                {/* <Tooltip title="Open settings"> */}
+                <Box display={"flex"} alignItems={"center"} gap="10px">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt="Remy Sharp" src="/user.jpg" />
+                  </IconButton>
+                  <Box
+                    sx={{
+                      display: {
+                        xs: "none",
+                        md: "flex",
+                      },
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Typography>{GetDataLingoLearn()?.fullName}</Typography>
+                    <Typography fontSize={10} color="GrayText">
+                      {GetDecodedJwt()?.Type}
+                    </Typography>
                   </Box>
-                </Tooltip>
+                </Box>
+                {/* </Tooltip> */}
               </Box>
             </Box>
           </Box>

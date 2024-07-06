@@ -12,15 +12,10 @@ export interface LoginResponseDto {
 }
 
 export interface DecodedJWT {
-  jti: string,
-  ut: string,
-  uid: number,
-  uname: string,
-  scopes: string[],
-  nbf: number,
+  Type: string,
+  aud: string,
   exp: number,
-  iss: string,
-  aud: string
+  iss: string
 }
 
 export interface Response<T> {

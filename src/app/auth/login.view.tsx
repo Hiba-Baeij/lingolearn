@@ -34,13 +34,11 @@ export default function SignIn() {
 
     const submit = async (event: LoginDto) => {
         setLoading(true)
-        // console.log("event", event);
         try {
             let loginDto: LoginResponseDto | undefined = undefined;
             loginDto = await AuthActions.Login(event) as LoginResponseDto
-            console.log(loginDto);
             if (loginDto) {
-                Initialize(loginDto.accessToken, loginDto.refreshToken)
+                Initialize(loginDto)
                 navigate('/')
             }
             setLoading(false)

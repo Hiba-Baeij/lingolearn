@@ -42,13 +42,13 @@ function App() {
     isDarkMode ? document.body.classList.add('dark') : document.body.classList.remove('dark')
   }, [isDarkMode])
 
-  // useEffect(() => {
-  //   if (!IsLoggedIn()) {
-  //     LogOut();
-  //     navigation('/signin')
-  //   }
+  useEffect(() => {
+    if (!IsLoggedIn()) {
+      LogOut();
+      navigation('/login')
+    }
 
-  // }, [])
+  }, [])
 
 
   return (
