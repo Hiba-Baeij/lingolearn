@@ -9,6 +9,8 @@ import LessonForm from './components/LessonForm';
 import { FaUsers } from 'react-icons/fa6';
 import { useLevels } from '../levels/useLevels';
 import { useNavigate } from 'react-router-dom';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { MenuProps } from '@/config/theme/theme';
 
 
 const breadcrumbs = [
@@ -29,6 +31,7 @@ export default function Lessons() {
     const queryClient = useQueryClient();
     const { getLevel } = useLevels();
     const navigate = useNavigate();
+    const { levels } = useLevels();
 
     const { data: lessons, isLoading } = useQuery({
         queryKey: [LESSONS_ENDPOINT],
@@ -78,6 +81,26 @@ export default function Lessons() {
                 onDelete={(ids) => onDelete(ids)}
                 onEdit={(id) => { setOpen(true); setLessonId(id) }}
                 onCreate={() => setOpen(true)}
+                moreActions={
+                    <>
+                        <FormControl size="small" sx={{ width: "500px" }}>
+                            <InputLabel id="level-id">ابحث عن مستوى معين</InputLabel>
+                            <Select
+                                labelId="level-id"
+                                fullWidth
+                                label="ابحث عن مستوى معين"
+                                MenuProps={MenuProps}
+
+                            >
+                                {levels?.map((level) => (
+                                    <MenuItem key={level.id} value={level.id}>
+                                        {level.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+
+                        </FormControl>                    </>
+                }
             ></MaterialTable>
             <LessonForm setId={(value) => setLessonId(value)} id={lessonId} open={open} setOpen={(value) => setOpen(value)}></LessonForm>
         </Page>

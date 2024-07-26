@@ -3,7 +3,6 @@ import DialogForm from '@/shared/components/DialogForm'
 import { Card, Checkbox, FormControl, FormHelperText, InputAdornment, InputLabel, ListItemIcon, ListItemText, MenuItem, Select, SelectChangeEvent, TextField, CardMedia, Skeleton, IconButton, Tooltip, Box, Button, CircularProgress } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import FileUploader from '@/shared/components/FileUploader'
 import { GET_ID_LEVEL_ENDPOINT, LevelsActions, LEVELS_ENDPOINT } from '@/api/levels/actions'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AccountCircle, Description, Edit, Phone } from '@mui/icons-material'
@@ -111,13 +110,6 @@ export default function LevelDetails() {
                             <TextField error={!!fieldState.error} fullWidth
                                 helperText={fieldState.error?.message}
                                 {...field} id='name' label={"الاسم"}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <GiLevelFour />
-                                        </InputAdornment>
-                                    )
-                                }}
 
                             />
                         }
@@ -129,13 +121,6 @@ export default function LevelDetails() {
                                 helperText={fieldState.error?.message}
                                 {...field} id='order' label={"الترتيب"}
                                 type="number"
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <FaFirstOrder />
-                                        </InputAdornment>
-                                    )
-                                }}
                             />
                         }
                         />
@@ -145,13 +130,6 @@ export default function LevelDetails() {
                             <TextField error={!!fieldState.error} fullWidth
                                 helperText={fieldState.error?.message}
                                 {...field} id='description' label={"الوصف"}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Description />
-                                        </InputAdornment>
-                                    )
-                                }}
                             />
                         }
                         />

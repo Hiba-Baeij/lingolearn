@@ -3,11 +3,10 @@ export interface LessonDto {
   id: string
   name: string;
   text: string;
-  imageFile: File | null;
-  file: File | null;
-  coverImageUrl: File | null;
-  fileUrl?: string;
-  imageUrl?: string;
+  coverImageUrl: File | string;
+  fileUrl: File | string;
+  coverImageShow: string;
+  fileUrlShow: string;
   type: string
   levelId: string
   order: number;

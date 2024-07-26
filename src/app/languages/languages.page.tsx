@@ -80,7 +80,7 @@ export default function Laguages() {
                     !isLoading && languages && languages?.map((language, index) => (
                         <Card key={language.id} sx={{ position: 'relative' }} className="col-span-3 lg:col-span-1 relative flex flex-col justify-start lg:flex-row items-center">
                             <CardMedia
-                                sx={{ height: 120, width: { lg: 200, md: 200, xs: 250 }, borderRadius: '5px', marginX: { lg: 1.5, md: 2, xs: 2 }, marginY: { lg: 1.5, md: 2, xs: 2 } }}
+                                sx={{ height: 140, width: { lg: 200, md: 200, xs: 250 }, borderRadius: '5px', objectFit: 'cover', marginX: { lg: 1.5, md: 2, xs: 2 }, marginY: { lg: 1.5, md: 2, xs: 2 } }}
                                 image={language.imageUrl ? getFileUrl(language.imageUrl) : '/non-image.svg'}
                                 title="image"
                             />

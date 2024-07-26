@@ -3,12 +3,13 @@ import DialogForm from '@/shared/components/DialogForm'
 import { Button, Checkbox, CircularProgress, FormControl, FormControlLabel, FormHelperText, InputAdornment, InputLabel, ListItemIcon, ListItemText, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, TextField } from '@mui/material'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import FileUploader from '@/shared/components/FileUploader'
 import { GET_ID_STUDENT_ENDPOINT, StudentsActions, STUDENTS_ENDPOINT } from '@/api/students/actions'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AccountCircle, Email, Phone } from '@mui/icons-material'
 import PasswordIcon from '@mui/icons-material/Password';
 import moment from "moment"
+import FileInput from '@/shared/components/FileInput'
+import { FileType, useFile } from '@/shared/hooks/useFile'
 type Props = {
     open: boolean;
     id: string;
@@ -30,6 +31,7 @@ export default function StudentForm({ open, setOpen, id, setId }: Props) {
     const queryClient = useQueryClient();
     const [imageUrl, setImageUrl] = useState("");
     const [block, setBlock] = useState(false);
+    const { getFileType } = useFile();
 
     const { data: studentDto, isSuccess: isSuccessDetails } = useQuery({
         enabled: !!id,
@@ -44,7 +46,7 @@ export default function StudentForm({ open, setOpen, id, setId }: Props) {
     const { mutate, isPending } = useMutation({
         mutationFn: (v: StudentDto) =>
             id
-                ? StudentsActions.ModifyStudent({ ...v, id: id }) : StudentsActions.AddStudent(v),
+                ? StudentsActions.ModifyStudent({ ...v, id: id, birthDate: v.birthDate == "" ? null : v.birthDate }) : StudentsActions.AddStudent(v),
         onSuccess: () => {
             reset({ ...initiale })
             setId("")
@@ -66,6 +68,8 @@ export default function StudentForm({ open, setOpen, id, setId }: Props) {
     })
 
     const onSubmit = handleSubmit(async (v: StudentDto) => {
+        console.log(typeof v.birthDate);
+
         mutate(v);
     });
     const resetForm = () => {
@@ -198,17 +202,13 @@ export default function StudentForm({ open, setOpen, id, setId }: Props) {
                 </div>
                 <div className="col-span-2">
                     {/* {imageUrl} */}
-                    <Controller control={control} name="imageFile" render={({ field }) =>
-                        <FileUploader
-                            {...field}
-                            onChangeUrl={setImageUrl}
-                            url={imageUrl}
-                            label="صورة الطالب"
-                            name="image"
-                            value={field.value}
-                            dtoId={studentDto?.id}
-                        />
-                    } />
+                    <FileInput attachedFiles={studentDto?.imageUrl ? [{
+                        id: studentDto?.id ?? "",
+                        name: "صورة الشخصية",
+                        url: studentDto?.imageUrl,
+                        type: getFileType(studentDto?.imageUrl) as FileType
+                    }] : []} control={control} name='imageFile'></FileInput>
+
                 </div>
 
             </div>

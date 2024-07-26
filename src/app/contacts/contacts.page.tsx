@@ -5,7 +5,6 @@ import { HeadsType } from '@/shared/components/table/CrudTable';
 import { Contacts as ContactsType } from '@/api/contacts/dto';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ContactsActions, CONTACTS_ENDPOINT } from '@/api/contacts/actions';
-import ContactForm from './components/ContactForm';
 import { FaUsers } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
@@ -35,12 +34,20 @@ export default function Contacts() {
 
     const heads = [
         {
-            key: 'title',
-            label: "العنوان"
+            key: 'name',
+            label: "الاسم"
         },
         {
-            key: 'description',
-            label: "الوصف"
+            key: 'text',
+            label: "النص"
+        },
+        {
+            key: 'email',
+            label: "البريد الالكتروني"
+        },
+        {
+            key: 'phoneNumber',
+            label: "الهاتف"
         },
 
     ] as HeadsType<ContactsType>[]
@@ -63,12 +70,11 @@ export default function Contacts() {
                 rows={levels}
                 selectable
                 isLoading={isLoading}
-                actions={['create', 'delete', 'details', 'edit']}
+                actions={['delete']}
                 onDelete={(ids) => onDelete(ids)}
-                onEdit={(id) => navigate(`/levels/${id}`)}
-                onCreate={() => setOpen(true)}
+
             ></MaterialTable>
-            <ContactForm setId={(value) => setContactId(value)} id={contactId} open={open} setOpen={(value) => setOpen(value)}></ContactForm>
+            {/* <ContactForm setId={(value) => setContactId(value)} id={contactId} open={open} setOpen={(value) => setOpen(value)}></ContactForm> */}
         </Page>
     )
 }

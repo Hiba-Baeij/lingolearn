@@ -2,7 +2,6 @@ import { LanguageDto } from '@/api/languages/dto'
 import { Box, Button, Card, CardMedia, Checkbox, CircularProgress, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, ListItemIcon, ListItemText, MenuItem, Select, SelectChangeEvent, Skeleton, TextField, Tooltip, Typography } from '@mui/material'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import FileUploader from '@/shared/components/FileUploader'
 import { GET_ID_LANGUAGE_ENDPOINT, LanguagesActions, LANGUAGES_ENDPOINT } from '@/api/languages/actions'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Edit, Language, NoteAdd } from '@mui/icons-material'
@@ -37,6 +36,8 @@ export default function LanguageDetails() {
     const [hoveredCard, setHoveredCard] = useState<number | null>(null);
     const { getFileUrl } = useFile()
     const navigate = useNavigate()
+    const [fileUrl, setFileUrl] = useState<string | null | undefined>('');
+    const { openFileWindow } = useFile();
 
     const { data: languageDto, isLoading } = useQuery({
         enabled: id != "new",
@@ -65,15 +66,25 @@ export default function LanguageDetails() {
     });
     const resetForm = () => {
         reset({ ...initiale })
-        setImageUrl('')
+        setFileUrl('')
 
     }
+    const handleFileUpload = (payload: { file: File; base64: string }) => {
+        setFileUrl(payload.base64);
+        setValue("imageFile", payload.file);
+    };
+
+    const handleIconClick = () => {
+        openFileWindow(handleFileUpload);
+    };
+
     useEffect(() => {
         if (languageDto && id) {
             setValue('name', languageDto?.name)
             setValue('description', languageDto?.description)
             // setValue('imageFile', languageDto?.imageFile)
-            setImageUrl(languageDto?.imageUrl)
+            // setImageUrl(languageDto?.imageUrl)
+            setFileUrl(languageDto?.imageUrl)
             console.log(languageDto?.imageUrl);
 
         }
@@ -122,7 +133,7 @@ export default function LanguageDetails() {
 
                     <div className="col-span-3 md:col-span-1">
                         {/* {imageUrl} */}
-                        <Controller control={control} name="imageFile" render={({ field }) =>
+                        {/* <Controller control={control} name="imageFile" render={({ field }) =>
                             <FileUploader
                                 {...field}
                                 onChangeUrl={setImageUrl}
@@ -132,7 +143,16 @@ export default function LanguageDetails() {
                                 value={field.value}
                                 dtoId={languageDto?.id}
                             />
-                        } />
+                        } /> */}
+                        {fileUrl ? (
+                            <div style={{ border: "1px solid #eee" }} className='w-full rounded-lg cursor-pointer flex justify-center items-center' onClick={handleIconClick} >
+                                <img src={languageDto?.imageUrl ? getFileUrl(languageDto?.imageUrl) : fileUrl} className='w-[260px] h-[230px] rounded-lg object-cover' alt="Profile" />
+                            </div>
+                        ) : (
+                            <div className=' p-5 rounded-lg cursor-pointer flex justify-end items-end' onClick={handleIconClick} >
+                                <img src='/non-image.svg' />
+                            </div>
+                        )}
                     </div>
                     <Box display={'flex'} flexWrap="wrap" justifyContent={{ lg: 'flex-start', md: "flex-start", xs: "center" }} width={'100%'} alignContent='center' gap={2}>
                         <Button variant='contained' startIcon={<Edit />} type="submit">
@@ -161,7 +181,7 @@ export default function LanguageDetails() {
                                         <div className="col-span-3 md:col-span-1">
                                             <CardMedia
                                                 sx={{ height: 100, width: "100%", borderRadius: '5px' }}
-                                                image={'/non-image.svg'}
+                                                image={lesson.fileUrl ? getFileUrl(lesson.fileUrl) : '/non-image.svg'}
                                                 title="image"
                                             />
                                             <div className='flex justify-between items-center w-full mt-3'>

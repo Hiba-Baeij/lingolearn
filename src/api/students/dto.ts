@@ -8,7 +8,7 @@ export interface StudentDto {
   password: string
   phoneNumber: string
   email: string;
-  birthDate: string;
+  birthDate: string | null;
   isBlock: boolean;
 }
 
@@ -17,6 +17,6 @@ export interface Students {
   fullName: string;
   phoneNumber: string;
   imageUrl: string;
-  birthDate: string;
+  birthDate: string | null;
   isBlock: boolean;
 }

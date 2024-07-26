@@ -7,7 +7,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { StudentsActions, STUDENTS_ENDPOINT } from '@/api/students/actions';
 import StudentForm from './components/StudentForm';
 import { FaUsers } from 'react-icons/fa6';
-import { Chip } from '@mui/material';
+import { Chip, TextField } from '@mui/material';
 import moment from 'moment';
 import { useFile } from '@/shared/hooks/useFile';
 
@@ -89,6 +89,11 @@ export default function Students() {
                 onDelete={(ids) => onDelete(ids)}
                 onEdit={(id) => { setStudentId(id); setOpen(true) }}
                 onCreate={() => setOpen(true)}
+                moreActions={
+                    <>
+                        <TextField sx={{ width: "500px" }} id='fullName' label={"ابحث عن اسم الطالب"} />
+                    </>
+                }
             ></MaterialTable>
             <StudentForm setId={(value) => setStudentId(value)} id={studentId} open={open} setOpen={(value) => setOpen(value)}></StudentForm>
         </Page>

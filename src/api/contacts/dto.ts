@@ -7,9 +7,9 @@ export interface ContactDto {
 }
 
 export interface Contacts {
-  id: string;
-  title: string;
-  description: string;
-  levelId: string
-
+  id: string,
+  text: string,
+  email: string,
+  phoneNumber: string,
+  name: string
 }

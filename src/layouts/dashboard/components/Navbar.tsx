@@ -177,11 +177,11 @@ export default function Navbar({
                   {mode === "dark" ? <HiOutlineSun /> : <HiOutlineMoon />}
                 </IconButton>
 
-                <IconButton >
+                {/* <IconButton >
                   <Badge variant="standard" color="error" badgeContent={5} sx={{ width: 'max-content' }}>
                     <IoNotificationsOutline></IoNotificationsOutline>
                   </Badge>
-                </IconButton>
+                </IconButton> */}
 
                 {/* <Tooltip title="Open settings"> */}
                 <Box display={"flex"} alignItems={"center"} gap="10px">

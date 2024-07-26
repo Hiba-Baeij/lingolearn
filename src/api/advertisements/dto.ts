@@ -1,16 +1,16 @@
 
 export interface AdvertisementDto {
   id: string
-  name: string
-  order: number
-  description: string
+  title: string;
+  description: string;
   imageUrl: string[]
-  fileImage: null[] | File[]
+  imageFile: null[] | File[]
+  showInWebsite: boolean
 }
 
 export interface Advertisements {
   id: string;
-  name: string;
+  title: string;
   description: string;
   imageUrl: string[]
 

@@ -33,40 +33,43 @@ export default function Advertisements() {
     const [advertisementId, setAdvertisementId] = useState("")
     const queryClient = useQueryClient();
     const navigate = useNavigate();
-
-    const advertisements = [
-        {
-            id: "1",
-            order: "1",
-            name: "Advertisement 1",
-            imageUrl: ["https://www.marketing91.com/wp-content/uploads/2018/12/Advertising-3.jpg",
-                "https://previews.123rf.com/images/rawpixel/rawpixel1510/rawpixel151017992/46773264-advertising-advertise-branding-commercial-marketing-concept.jpg",
-                "https://akm-img-a-in.tosshub.com/indiatoday/images/story/202009/ad_1200x768.png?size=1200:675",
-            ],
-            description: " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit leo lobortis eget.",
-        },
-        {
-            id: "2",
-            order: "2",
-            name: "Advertisement 2",
-            imageUrl: ["https://www.marketing91.com/wp-content/uploads/2018/12/Advertising-3.jpg",
-                "https://previews.123rf.com/images/rawpixel/rawpixel1510/rawpixel151017992/46773264-advertising-advertise-branding-commercial-marketing-concept.jpg",
-                "https://akm-img-a-in.tosshub.com/indiatoday/images/story/202009/ad_1200x768.png?size=1200:675",
-            ],
-            description: " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit leo lobortis eget.",
-        },
-        {
-            id: "3",
-            order: "3",
-            name: "Advertisement 3",
-            imageUrl: ["https://www.marketing91.com/wp-content/uploads/2018/12/Advertising-3.jpg",
-                "https://previews.123rf.com/images/rawpixel/rawpixel1510/rawpixel151017992/46773264-advertising-advertise-branding-commercial-marketing-concept.jpg",
-                "https://akm-img-a-in.tosshub.com/indiatoday/images/story/202009/ad_1200x768.png?size=1200:675",
-            ],
-            description: " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit leo lobortis eget.",
-        },
-    ]
-    const [anchorElArray, setAnchorElArray] = useState(advertisements ? advertisements.map(() => null) : []);
+    const { data: advertisements, isLoading } = useQuery({
+        queryKey: [ADVERTISEMENTS_ENDPOINT],
+        queryFn: AdvertisementsActions.GetAdvertisements,
+    })
+    // const advertisements = [
+    //     {
+    //         id: "1",
+    //         order: "1",
+    //         name: "Advertisement 1",
+    //         imageUrl: ["https://www.marketing91.com/wp-content/uploads/2018/12/Advertising-3.jpg",
+    //             "https://previews.123rf.com/images/rawpixel/rawpixel1510/rawpixel151017992/46773264-advertising-advertise-branding-commercial-marketing-concept.jpg",
+    //             "https://akm-img-a-in.tosshub.com/indiatoday/images/story/202009/ad_1200x768.png?size=1200:675",
+    //         ],
+    //         description: " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit leo lobortis eget.",
+    //     },
+    //     {
+    //         id: "2",
+    //         order: "2",
+    //         name: "Advertisement 2",
+    //         imageUrl: ["https://www.marketing91.com/wp-content/uploads/2018/12/Advertising-3.jpg",
+    //             "https://previews.123rf.com/images/rawpixel/rawpixel1510/rawpixel151017992/46773264-advertising-advertise-branding-commercial-marketing-concept.jpg",
+    //             "https://akm-img-a-in.tosshub.com/indiatoday/images/story/202009/ad_1200x768.png?size=1200:675",
+    //         ],
+    //         description: " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit leo lobortis eget.",
+    //     },
+    //     {
+    //         id: "3",
+    //         order: "3",
+    //         name: "Advertisement 3",
+    //         imageUrl: ["https://www.marketing91.com/wp-content/uploads/2018/12/Advertising-3.jpg",
+    //             "https://previews.123rf.com/images/rawpixel/rawpixel1510/rawpixel151017992/46773264-advertising-advertise-branding-commercial-marketing-concept.jpg",
+    //             "https://akm-img-a-in.tosshub.com/indiatoday/images/story/202009/ad_1200x768.png?size=1200:675",
+    //         ],
+    //         description: " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit leo lobortis eget.",
+    //     },
+    // ]
+    const [anchorElArray, setAnchorElArray] = useState(advertisements ? advertisements?.map(() => null) : []);
 
     const handleClick = (event: any, index: number) => {
         const newAnchorElArray = [...anchorElArray];
@@ -106,7 +109,7 @@ export default function Advertisements() {
             </div>
             <div className='grid grid-cols-3 gap-5'>
                 {
-                    advertisements.map((item, index) =>
+                    advertisements?.map((item, index) =>
                         <Card key={item.id} className="md:col-span-1 col-span-2 p-5 relative rounded-md">
                             <IconButton
                                 sx={{ position: 'absolute', top: 2, right: 2, zIndex: 99, backgroundColor: "#eeeeee" }}
@@ -147,13 +150,13 @@ export default function Advertisements() {
                             </Menu>
                             <Carousel autoPlay={false}>
                                 {
-                                    item.imageUrl.map(url => (
+                                    item?.imageUrl?.map(url => (
                                         <img src={url} alt="" className='w-full h-[200px] rounded-md' />
                                     ))
                                 }
                             </Carousel>
 
-                            <h5>{item.name}</h5>
+                            <h5>{item.title}</h5>
                             <p className='text-sm mt-2'>{item.description}</p>
                         </Card>
 

@@ -49,14 +49,14 @@ export const useFile = () => {
     }
 
 
-    const isOfType = (fileExt: string, type: FileType) => fileExtentions.get(type)?.includes(fileExt)
+    const isOfType = (fileExt: string | undefined, type: FileType) => fileExtentions.get(type)?.includes(fileExt ?? '')
 
 
     const getFileName = (fileName: string) => {
         const tokens = fileName.split('/');
         return tokens[tokens.length - 1]
     }
-    const getFileUrl = (url: string) => {
+    const getFileUrl = (url: string | undefined) => {
         console.log(HOST_URL + "/" + url?.replace(/\\/g, '/'));
 
         return HOST_URL + "/" + url?.replace(/\\/g, '/')
@@ -66,7 +66,7 @@ export const useFile = () => {
         return `${(+size / 1000000).toFixed(2)}MB`
     }
 
-    function getFileType(fileExt: string): FileType {
+    function getFileType(fileExt: string | undefined): FileType {
         let fileType: FileType = 'image';
 
         fileExtentions.forEach((exts, key) => {

@@ -3,12 +3,12 @@ import DialogForm from '@/shared/components/DialogForm'
 import { Button, Checkbox, FormControl, FormHelperText, InputAdornment, InputLabel, ListItemIcon, ListItemText, Menu, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import FileUploader from '@/shared/components/FileUploader'
 import { GET_ID_LANGUAGE_ENDPOINT, LanguagesActions, LANGUAGES_ENDPOINT } from '@/api/languages/actions'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AccountCircle, Language, NoteAdd, Phone } from '@mui/icons-material'
-import PasswordIcon from '@mui/icons-material/Password';
 import { useLanguages } from '../useLanguages'
+import FileInput from '@/shared/components/FileInput'
+import { FileType, useFile } from '@/shared/hooks/useFile'
 
 type Props = {
     open: boolean;
@@ -26,10 +26,12 @@ const ITEM_HEIGHT = 48;
 
 export default function LanguageForm({ open, setOpen, id, setId }: Props) {
     const queryClient = useQueryClient();
-    const [imageUrl, setImageUrl] = useState("");
+    // const [imageUrl, setImageUrl] = useState("");
     const { availablelanguages } = useLanguages();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const openMenu = Boolean(anchorEl);
+    const { getFileType } = useFile();
+
     const handleClickMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -66,14 +68,14 @@ export default function LanguageForm({ open, setOpen, id, setId }: Props) {
     const resetForm = () => {
         setId("")
         reset({ ...initiale })
-        setImageUrl('')
+        // setImageUrl('')
 
     }
     useEffect(() => {
         if (languageDto && id) {
             setValue('name', languageDto?.name)
             setValue('description', languageDto?.description)
-            setImageUrl(languageDto?.imageUrl ? languageDto?.imageUrl : '')
+            // setImageUrl(languageDto?.imageUrl ? languageDto?.imageUrl : '')
 
         }
     }, [languageDto, id])
@@ -87,14 +89,6 @@ export default function LanguageForm({ open, setOpen, id, setId }: Props) {
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
                             {...field} id='name' label={"الاسم"}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <Language />
-                                    </InputAdornment>
-                                )
-                            }}
-
                         />
                     }
                     />
@@ -137,31 +131,19 @@ export default function LanguageForm({ open, setOpen, id, setId }: Props) {
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
                             {...field} id='description' label={"الوصف"}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <NoteAdd />
-                                    </InputAdornment>
-                                )
-                            }}
                         />
                     }
                     />
                 </div>
 
                 <div className="col-span-2">
-                    {JSON.stringify(imageUrl)}
-                    <Controller control={control} name="imageFile" render={({ field }) =>
-                        <FileUploader
-                            {...field}
-                            onChangeUrl={setImageUrl}
-                            url={imageUrl}
-                            label="صورة اللغة"
-                            name="image"
-                            value={field.value}
-                            dtoId={languageDto?.id}
-                        />
-                    } />
+                    <FileInput attachedFiles={languageDto?.imageUrl ? [{
+                        id: languageDto?.id ?? "",
+                        name: "صورة اللغة",
+                        url: languageDto?.imageUrl,
+                        type: getFileType(languageDto?.imageUrl) as FileType
+                    }] : []} control={control} name='imageFile'></FileInput>
+
                 </div>
 
             </div>

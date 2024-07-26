@@ -39,6 +39,7 @@ interface Props<DT> {
     selectable: boolean;
     disabledCheckBox?: (item: DT) => boolean;
     details?: boolean;
+    moreActions?: React.ReactNode,
     pagination?: React.ReactNode,
     onDelete?: (id: any[]) => void,
     onEdit?: (id: any) => void,
@@ -172,11 +173,12 @@ interface EnhancedTableToolbarProps {
     selected: any[];
     onDelete: (id: any[]) => void,
     resetSelected: () => void,
+    moreActions?: React.ReactNode,
     onCreate: () => void,
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-    const { resetSelected, numSelected, actions, onDelete, onCreate, selected } = props;
+    const { resetSelected, moreActions, numSelected, actions, onDelete, onCreate, selected } = props;
     return (
         <Toolbar
             sx={{
@@ -208,23 +210,27 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 </Typography>
             )}
             {numSelected > 0 ? (
-                actions.includes('delete') && (<Tooltip title="Delete">
+                actions.includes('delete') && (<Tooltip title="حذف">
                     <IconButton onClick={() => { onDelete(selected); resetSelected() }}>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>)
             ) : (
-                actions.includes('create') && (<Tooltip title="Add Item">
-                    <Button onClick={() => onCreate()} endIcon={<FaPlus size={16} />} variant='contained'>
-                        إضافة
-                    </Button>
-                </Tooltip>)
+                <>
+                    {moreActions}
+                    {actions.includes('create') && (<Tooltip title="إضافة عنصر">
+                        <Button sx={{ ml: 2 }} onClick={() => onCreate()} endIcon={<FaPlus size={16} />} variant='contained'>
+                            إضافة
+                        </Button>
+                    </Tooltip>)}
+                </>
+
             )
             }
         </Toolbar >
     );
 }
-export default function EnhancedTable<DT>({ rows, heads, actions, dataReducer, details, isLoading, disabledCheckBox, pagination, total, onDelete, onEdit, onCreate, selectable }: Props<DT>) {
+export default function EnhancedTable<DT>({ rows, heads, actions, moreActions, dataReducer, details, isLoading, disabledCheckBox, pagination, total, onDelete, onEdit, onCreate, selectable }: Props<DT>) {
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof DT>();
     const [selected, setSelected] = React.useState<string[]>([]);
@@ -296,7 +302,7 @@ export default function EnhancedTable<DT>({ rows, heads, actions, dataReducer, d
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
-                <EnhancedTableToolbar resetSelected={() => setSelected([])} selected={selected} onCreate={() => onCreate && onCreate()} numSelected={selected.length} actions={actions} onDelete={() => onDelete && onDelete(selected)} />
+                <EnhancedTableToolbar moreActions={moreActions} resetSelected={() => setSelected([])} selected={selected} onCreate={() => onCreate && onCreate()} numSelected={selected.length} actions={actions} onDelete={() => onDelete && onDelete(selected)} />
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
