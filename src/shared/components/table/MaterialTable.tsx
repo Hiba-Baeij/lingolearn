@@ -403,7 +403,7 @@ export default function EnhancedTable<DT>({ rows, heads, actions, moreActions, d
                                     >
                                         <TableCell colSpan={heads.length + 2}>
                                             <div className="text-center flex justify-center w-full py-4 text-xl font-bold text-gray-400">
-                                                There is no data
+                                                لاتوجد بيانات
                                             </div>
                                         </TableCell>
                                     </TableRow>

@@ -8,6 +8,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Description } from '@mui/icons-material'
 import { GiLevelFour } from 'react-icons/gi'
 import FileInput from '@/shared/components/FileInput'
+import { FileType } from 'rsuite/esm/Uploader'
+import { useFile } from '@/shared/hooks/useFile'
 
 type Props = {
     open: boolean;
@@ -18,13 +20,16 @@ type Props = {
 const initiale = {
     id: "",
     title: "",
-    fileImage: [],
+    companyName: "",
+    price: 0,
+    imagesFile: [],
     imageUrl: [],
     description: "",
 }
 
 export default function AdvertisementForm({ open, setOpen, id, setId }: Props) {
     const queryClient = useQueryClient();
+    const { getFileType } = useFile();
 
     const { data: advertisementDto, isSuccess: isSuccessDetails } = useQuery({
         enabled: !!id,
@@ -68,19 +73,33 @@ export default function AdvertisementForm({ open, setOpen, id, setId }: Props) {
     return (
         <DialogForm isForm onOpenChange={() => setOpen(false)} open={open} isLoading={isPending} title={id ? "تعديل الإعلان" : "إضافة الإعلان"} formProps={{ onSubmit: (e) => onSubmit(e) }} onClose={() => resetForm()} onReset={() => resetForm()}>
             <div className='grid grid-cols-2 gap-4'>
+
                 <div className="col-span-2">
                     <Controller name='title' rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
                             {...field} id='title' label={"العنوان"}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <GiLevelFour />
-                                    </InputAdornment>
-                                )
-                            }}
 
+                        />
+                    }
+                    />
+                </div>
+                <div className="md:col-span-1 col-span-2">
+                    <Controller name='companyName' rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
+                        <TextField error={!!fieldState.error} fullWidth
+                            helperText={fieldState.error?.message}
+                            {...field} id='title' label={"اسم الشركة"}
+
+                        />
+                    }
+                    />
+                </div>
+                <div className="md:col-span-1 col-span-2">
+                    <Controller name='price' rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
+                        <TextField error={!!fieldState.error} fullWidth
+                            helperText={fieldState.error?.message}
+                            {...field} id='title' label={"السعر"}
+                            type="number"
                         />
                     }
                     />
@@ -90,13 +109,6 @@ export default function AdvertisementForm({ open, setOpen, id, setId }: Props) {
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
                             {...field} id='description' label={"الوصف"}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <Description />
-                                    </InputAdornment>
-                                )
-                            }}
                         />
                     }
                     />
@@ -106,7 +118,7 @@ export default function AdvertisementForm({ open, setOpen, id, setId }: Props) {
                 </div>
 
                 <div className="col-span-2">
-                    <FileInput control={control} name='imageFile'></FileInput>
+                    <FileInput control={control} name='imagesFile' multiple></FileInput>
                 </div>
 
             </div>

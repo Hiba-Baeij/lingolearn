@@ -49,7 +49,7 @@ export class AdvertisementsActions {
     }
     static async AddAdvertisement(payload: AdvertisementDto) {
         try {
-            const res = await useApi('POST', ADD_ADVERTISEMENT_ENDPOINT, { successMessage: "تمت الإضافة بنجاح", errorMessage: true }, serialize(payload))
+            const res = await useApi('POST', ADD_ADVERTISEMENT_ENDPOINT, { successMessage: "تمت الإضافة بنجاح", errorMessage: true }, serialize(payload, { dotsForObjectNotation: true, indices: true }))
             return res
 
         }
@@ -60,7 +60,7 @@ export class AdvertisementsActions {
     }
     static async ModifyAdvertisement(payload: AdvertisementDto) {
         try {
-            const res = await useApi('POST', MODIFY_ADVERTISEMENT_ENDPOINT, { successMessage: "تم التعديل بنجاح", errorMessage: true }, serialize(payload))
+            const res = await useApi('POST', MODIFY_ADVERTISEMENT_ENDPOINT, { successMessage: "تم التعديل بنجاح", errorMessage: true }, serialize(payload, { dotsForObjectNotation: true, indices: true }))
             return res
 
         }

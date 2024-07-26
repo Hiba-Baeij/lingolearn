@@ -1,44 +1,79 @@
 import React from 'react'
 import { Card, Typography, Box, Icon } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2/Grid2'
-import { BiUpArrow, BiDownArrow } from 'react-icons/bi'
-import { FaBoxes } from 'react-icons/fa'
-import { HiUsers } from 'react-icons/hi2'
+import { HomeDto } from '@/api/home/dto'
+import { IoDocumentText } from 'react-icons/io5'
+import { GiChampions } from 'react-icons/gi'
+import { MdOutlineHeadsetMic } from 'react-icons/md'
+import { FaRoad, FaUsers } from 'react-icons/fa6'
+import { SiBookstack } from 'react-icons/si'
+import { GrLanguage } from 'react-icons/gr'
 
-export default function Statistics() {
+type Props = {
+    homeDto: HomeDto | undefined
+}
+export default function Statistics({ homeDto }: Props) {
     interface StatItem {
         label: string,
         icon: React.ElementType,
-        value: string,
+        value: number | undefined,
         prefix: string,
         color: string
     }
     const stats: Array<StatItem> = [
         {
-            label: 'Earnings',
-            icon: BiUpArrow,
-            value: '152,000',
-            prefix: '$',
-            color: 'primary'
-        },
-        {
-            label: 'Refunds',
-            icon: BiDownArrow,
-            value: '8,700',
-            prefix: '$',
-            color: 'error'
-        },
-        {
-            label: 'New Users',
-            icon: HiUsers,
-            value: '120',
+            label: 'عدد الطلاب',
+            icon: FaUsers,
+            value: homeDto?.studentCount,
             prefix: '+',
             color: 'primary'
         },
         {
-            label: 'New Products',
-            icon: FaBoxes,
-            value: '25',
+            label: 'عدد اللغات',
+            icon: GrLanguage,
+            value: homeDto?.languageCount,
+            prefix: '+',
+            color: 'primary'
+        },
+        {
+            label: 'عدد الدروس',
+            icon: SiBookstack,
+            value: homeDto?.lessonCount,
+            prefix: '+',
+            color: 'primary'
+        },
+        {
+            label: 'عدد المستويات',
+            icon: FaRoad,
+            value: homeDto?.levelCount,
+            prefix: '+',
+            color: 'primary'
+        },
+        {
+            label: 'عدد الإعلانات',
+            icon: MdOutlineHeadsetMic,
+            value: homeDto?.advertisementCount,
+            prefix: '+',
+            color: 'primary'
+        },
+        {
+            label: 'عدد التحديات',
+            icon: GiChampions,
+            value: homeDto?.challengeCount,
+            prefix: '+',
+            color: 'primary'
+        },
+        {
+            label: 'عدد أسئلة الاختبارات',
+            icon: IoDocumentText,
+            value: homeDto?.questionCount,
+            prefix: '+',
+            color: 'primary'
+        },
+        {
+            label: 'عدد الإجابات',
+            icon: IoDocumentText,
+            value: homeDto?.answerCount,
             prefix: '+',
             color: 'primary'
         },
@@ -46,7 +81,7 @@ export default function Statistics() {
 
     return (
         <Card sx={{ p: 2 }}>
-            <Typography color='primary' fontWeight={'bold'} variant="h6">Daily Statistics</Typography>
+            <Typography color='primary' fontWeight={'bold'} variant="h6">الإحصائات اليومية</Typography>
 
             <Grid container spacing={{
                 xs: 5,
@@ -78,7 +113,7 @@ export default function Statistics() {
                                 <Typography fontSize={
                                     {
                                         xs: 32,
-                                        md: 36
+                                        md: 34
                                     }
                                 } fontWeight={'bold'} >
                                     <span className='dark:text-gray-400 mx-1' >{s.prefix}</span>{s.value}

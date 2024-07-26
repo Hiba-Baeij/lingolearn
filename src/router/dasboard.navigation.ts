@@ -4,7 +4,7 @@ import { IoDocumentText, IoHomeSharp } from 'react-icons/io5';
 import { SiBookstack } from "react-icons/si";
 import { IoMdNotifications } from "react-icons/io";
 import { MdOutlineHeadsetMic } from "react-icons/md";
-import {  FaRoad } from "react-icons/fa6";
+import { FaRoad } from "react-icons/fa6";
 import { GiChampions } from "react-icons/gi";
 import { FaUsers } from 'react-icons/fa';
 import { FaBarsProgress } from "react-icons/fa6";
@@ -52,12 +52,12 @@ export const DashboardNavigationMain: NavigationRecord[] = [
         icon: MdOutlineContactSupport,
 
     },
-    {
-        text: "الإشعارات",
-        path: "/notifications",
-        icon: IoMdNotifications,
+    // {
+    //     text: "الإشعارات",
+    //     path: "/notifications",
+    //     icon: IoMdNotifications,
 
-    },
+    // },
     {
         text: "الإعلانات",
         path: "/advertisements",

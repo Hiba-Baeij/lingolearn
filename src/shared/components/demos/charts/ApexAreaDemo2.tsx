@@ -4,11 +4,11 @@ import { useTheme } from '@mui/material/styles';
 import { ApexOptions } from 'apexcharts';
 import "@/styles/_main.scss"
 type PropsChart = {
-  advertisementCountMonthly: number[] | undefined,
-  studentCountMonthly: number[] | undefined,
+  lessonCountMonthly: number[] | undefined,
+  languageCountMonthly: number[] | undefined
 }
 
-export default function AreaDemo({ advertisementCountMonthly, studentCountMonthly }: PropsChart) {
+export default function ApexAreaDemo2({ languageCountMonthly, lessonCountMonthly }: PropsChart) {
   const theme = useTheme();
 
   const chartOptions = useMemo<ApexOptions>(() => ({
@@ -29,7 +29,7 @@ export default function AreaDemo({ advertisementCountMonthly, studentCountMonthl
     },
     yaxis: {
       min: 0,
-      max: 1000,
+      max: 100,
     },
     tooltip: {
       enabled: true,
@@ -47,21 +47,23 @@ export default function AreaDemo({ advertisementCountMonthly, studentCountMonthl
       enabled: false,
     },
     colors: [
-      theme.palette.warning.main,
-      theme.palette.info.main
+      theme.palette.primary.main,
+      theme.palette.secondary.main,
+
     ],
     series: [
-      {
-        name: 'عدد الطلاب شهريا',
-        data: studentCountMonthly ?? [],
-      },
 
       {
-        name: 'عدد الإعلانات شهريا',
-        data: advertisementCountMonthly ?? [],
+        name: 'عدد اللغات شهريا',
+        data: languageCountMonthly ?? [],
       },
+      {
+        name: 'عدد الدروس شهريا',
+        data: lessonCountMonthly ?? [],
+      },
+
     ],
-  }), [studentCountMonthly, advertisementCountMonthly, theme]);
+  }), [lessonCountMonthly, languageCountMonthly, theme]);
 
   return (
     <Chart options={chartOptions} series={chartOptions.series} type="area" height={350} />

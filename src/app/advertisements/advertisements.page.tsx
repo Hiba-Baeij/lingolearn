@@ -14,6 +14,7 @@ import Carousel from 'react-material-ui-carousel';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { MdEdit } from 'react-icons/md';
+import { useFile } from '@/shared/hooks/useFile';
 
 
 const breadcrumbs = [
@@ -32,6 +33,7 @@ export default function Advertisements() {
     const [open, setOpen] = useState(false)
     const [advertisementId, setAdvertisementId] = useState("")
     const queryClient = useQueryClient();
+    const { getFileUrl } = useFile();
     const navigate = useNavigate();
     const { data: advertisements, isLoading } = useQuery({
         queryKey: [ADVERTISEMENTS_ENDPOINT],
@@ -83,10 +85,7 @@ export default function Advertisements() {
         setAnchorElArray(newAnchorElArray);
 
     };
-    // const { data: advertisements, isLoading } = useQuery({
-    //     queryKey: [ADVERTISEMENTS_ENDPOINT],
-    //     queryFn: AdvertisementsActions.GetAdvertisements,
-    // })
+
 
     const { mutate: mutateDelete, isSuccess } = useMutation({
         mutationFn: (id: string) =>
@@ -150,8 +149,8 @@ export default function Advertisements() {
                             </Menu>
                             <Carousel autoPlay={false}>
                                 {
-                                    item?.imageUrl?.map(url => (
-                                        <img src={url} alt="" className='w-full h-[200px] rounded-md' />
+                                    item?.imagesUrl?.map(url => (
+                                        <img src={url ? getFileUrl(url) : '/non-image.svg'} alt="" className='w-full h-[200px] rounded-md' />
                                     ))
                                 }
                             </Carousel>

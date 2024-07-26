@@ -3,15 +3,19 @@ export interface AdvertisementDto {
   id: string
   title: string;
   description: string;
-  imageUrl: string[]
-  imageFile: null[] | File[]
+  imagesUrl: string[]
+  imagesFile: null[] | File[]
   showInWebsite: boolean
+  companyName: string,
+  price: number
 }
 
 export interface Advertisements {
   id: string;
   title: string;
   description: string;
-  imageUrl: string[]
+  imagesUrl: string[];
+  companyName: string;
+  price: number
 
 }
