@@ -1,4 +1,4 @@
-export const HOST_URL = 'http://lingolearn.somee.com'
+export const HOST_URL = 'https://lingolearn.somee.com'
 export const API_URL = `${HOST_URL}/api/`
 const APP_NAME = "LingoLearn";
 

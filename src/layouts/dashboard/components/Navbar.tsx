@@ -11,6 +11,9 @@ import {
   Tooltip,
   Typography,
   Slide,
+  ListItemIcon,
+  MenuItem,
+  Menu,
 } from "@mui/material";
 import {
   IoMenuOutline,
@@ -22,7 +25,8 @@ import { BsChevronCompactRight, } from "react-icons/bs";
 import { useContext } from "react";
 import { ColorModeContext } from "@/app/hooks/useDarkMode";
 import { BreadCrumbItem } from "@/shared/types/navigation";
-import { GetDataLingoLearn, GetDecodedJwt } from "@/shared/hooks/useAuth";
+import { GetDataLingoLearn, GetDecodedJwt, LogOut } from "@/shared/hooks/useAuth";
+import { MdLogout } from "react-icons/md";
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
@@ -48,9 +52,18 @@ export default function Navbar({
   const toggle = () => {
     setMode(mode === "dark" ? "light" : "dark");
   };
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
 
   const handleOpenUserMenu = () => {
     console.log('handler')
+  };
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   interface Props {
@@ -183,9 +196,8 @@ export default function Navbar({
                   </Badge>
                 </IconButton> */}
 
-                {/* <Tooltip title="Open settings"> */}
                 <Box display={"flex"} alignItems={"center"} gap="10px">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <IconButton onClick={handleClick} sx={{ p: 0 }}>
                     <Avatar alt="Remy Sharp" src="/user.jpg" />
                   </IconButton>
                   <Box
@@ -203,7 +215,55 @@ export default function Navbar({
                     </Typography>
                   </Box>
                 </Box>
-                {/* </Tooltip> */}
+                <Menu
+                  anchorEl={anchorEl}
+                  id="account-menu"
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                  onClick={handleClose}
+                  sx={{
+                    '& .MuiMenu-paper': {
+                      right: '150px !important',
+                      left: 'unset !important',
+                      top: '35px !important'
+                    }
+                  }}
+                  PaperProps={{
+                    elevation: 0,
+                    sx: {
+                      overflow: 'visible',
+                      filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                      left: 20,
+                      mt: 1.5,
+                      '& .MuiAvatar-root': {
+                        width: 32,
+                        height: 32,
+                        ml: -0.5,
+                        mr: 1,
+                      },
+                      '&::before': {
+                        content: '""',
+                        display: 'block',
+                        position: 'absolute',
+                        top: 0,
+                        right: 14,
+                        width: 10,
+                        height: 10,
+                        bgcolor: 'background.paper',
+                        transform: 'translateY(-50%) rotate(45deg)',
+                        zIndex: 0,
+                      },
+                    },
+                  }}
+
+                >
+                  <MenuItem onClick={() => { LogOut(); handleClose }}>
+                    <ListItemIcon>
+                      <MdLogout fontSize={24} />
+                    </ListItemIcon>
+                    تسجيل الخروج
+                  </MenuItem>
+                </Menu>
               </Box>
             </Box>
           </Box>

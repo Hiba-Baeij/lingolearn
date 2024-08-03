@@ -3,10 +3,9 @@ export interface LessonDto {
   id: string
   name: string;
   text: string;
-  coverImageUrl: File | string;
-  fileUrl: File | string;
-  coverImageShow: string;
-  fileUrlShow: string;
+  expectedTimeOfCompletionInMinute: number;
+  links?: string[];
+  linksList: { link: string }[];
   type: string
   levelId: string
   order: number;

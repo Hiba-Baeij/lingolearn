@@ -27,6 +27,7 @@ import { IoEye } from "react-icons/io5";
 import { HeadsType } from './CrudTable';
 import Divider from '@mui/material/Divider';
 import { usePagination } from '@/shared/hooks/usePagination';
+import { RiDeleteBin6Line } from 'react-icons/ri';
 
 type Actions = "delete" | "create" | "details" | "edit";
 interface Props<DT> {
@@ -373,6 +374,12 @@ export default function EnhancedTable<DT>({ rows, heads, actions, moreActions, d
                                                             actions.includes('edit') && onEdit &&
                                                             <IconButton onClick={() => onEdit(row.id)} size="small" color="inherit" >
                                                                 <MdModeEdit />
+                                                            </IconButton>
+                                                        }
+                                                        {
+                                                            actions.includes('delete') && onDelete &&
+                                                            <IconButton onClick={() => onDelete([row.id])} size="small" color="error" >
+                                                                <RiDeleteBin6Line />
                                                             </IconButton>
                                                         }
                                                     </TableCell>

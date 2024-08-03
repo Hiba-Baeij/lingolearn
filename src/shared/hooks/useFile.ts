@@ -57,7 +57,7 @@ export const useFile = () => {
         return tokens[tokens.length - 1]
     }
     const getFileUrl = (url: string | undefined) => {
-        console.log(HOST_URL + "/" + url?.replace(/\\/g, '/'));
+        // console.log(HOST_URL + "/" + url?.replace(/\\/g, '/'));
 
         return HOST_URL + "/" + url?.replace(/\\/g, '/')
     }

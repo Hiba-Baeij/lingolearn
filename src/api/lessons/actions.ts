@@ -24,12 +24,18 @@ export class LessonsActions {
     }
     static async GetByIdLesson(id: string) {
         try {
-            const res = await useApi<Response<LessonDto>>('GET', GET_ID_LESSON_ENDPOINT, {}, {}, {
+            const res = await useApi<Response<LessonDto & {
+                coverImageUrl: File | null;
+                fileUrl: File | null
+            }>>('GET', GET_ID_LESSON_ENDPOINT, {}, {}, {
                 params: {
                     id: id
                 }
             })
-            return res?.data.response as LessonDto
+            return res?.data.response as LessonDto & {
+                coverImageUrl: File | null;
+                fileUrl: File | null
+            }
         }
         catch (er) {
             console.log('No Record Found')
@@ -46,7 +52,10 @@ export class LessonsActions {
             throw (er)
         }
     }
-    static async AddLesson(payload: LessonDto) {
+    static async AddLesson(payload: LessonDto & {
+        coverImageUrl: File | null;
+        fileUrl: File | null
+    }) {
         try {
             const res = await useApi('POST', ADD_LESSON_ENDPOINT, { successMessage: "تمت الإضافة بنجاح", errorMessage: true }, serialize(payload))
             return res
@@ -57,7 +66,10 @@ export class LessonsActions {
             throw (er)
         }
     }
-    static async ModifyLesson(payload: LessonDto) {
+    static async ModifyLesson(payload: LessonDto & {
+        coverImageUrl: File | null;
+        fileUrl: File | null
+    }) {
         try {
             const res = await useApi('POST', MODIFY_LESSON_ENDPOINT, { successMessage: "تم التعديل بنجاح", errorMessage: true }, serialize(payload))
             return res

@@ -82,7 +82,9 @@ export default function FileInput<T extends FieldValues>({
 
     const getFilePreview = useCallback(
         (file: File): Preview => {
-            const url = URL.createObjectURL(file);
+            const url = file ? URL.createObjectURL(file) : "";
+            console.log(file);
+
             return {
                 url,
                 id: file.name + url,

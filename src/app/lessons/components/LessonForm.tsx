@@ -1,14 +1,16 @@
 import { LessonDto } from '@/api/lessons/dto'
 import DialogForm from '@/shared/components/DialogForm'
-import { Checkbox, FormControl, FormHelperText, InputAdornment, InputLabel, ListItemIcon, ListItemText, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material'
+import { Checkbox, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, ListItemIcon, ListItemText, MenuItem, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react'
-import { Controller, useForm, useWatch } from 'react-hook-form'
+import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { GET_ID_LESSON_ENDPOINT, LessonsActions, LESSONS_ENDPOINT } from '@/api/lessons/actions'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { MenuProps } from '@/config/theme/theme'
 import { useLevels } from '@/app/levels/useLevels'
 import FileInput from '@/shared/components/FileInput'
 import { FileType, useFile } from '@/shared/hooks/useFile'
+import { Add, Close } from '@mui/icons-material'
+import { v4 as uuid } from 'uuid';
 
 type Props = {
     open: boolean;
@@ -16,22 +18,30 @@ type Props = {
     setOpen: (value: boolean) => void
     setId: (value: string) => void
 }
-const initiale = {
+
+const initial: LessonDto & {
+    coverImageUrl: File | null;
+    fileUrl: File | null;
+} = {
     id: "",
     name: "",
     text: "",
-    coverImageUrl: undefined,
-    fileUrl: undefined,
+    coverImageUrl: null,
+    fileUrl: null,
+    expectedTimeOfCompletionInMinute: 0,
+    linksList: [{ link: '' }],
     type: "0",
     levelId: "",
     order: 0,
     description: ""
-}
+};
+
+
 
 export default function LessonForm({ open, setOpen, id, setId }: Props) {
     const queryClient = useQueryClient();
-    // const [imageUrl, setImageUrl] = useState("");
-    // const [fileUrl, setFileUrl] = useState("");
+    const [url, setUrl] = useState("");
+    const [coverUrl, setCoverUrl] = useState("");
     const { levels } = useLevels();
 
     const { data: lessonDto, isSuccess: isSuccessDetails } = useQuery({
@@ -40,62 +50,99 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
         queryFn: async () => await LessonsActions.GetByIdLesson(id),
     })
 
-
-    const { control, handleSubmit, setValue, reset, watch } = useForm<LessonDto>({
-        defaultValues: { ...initiale }
+    const { control, handleSubmit, setValue, reset, watch, getValues } = useForm<LessonDto & {
+        coverImageUrl: File | null;
+        fileUrl: File | null
+    }>({
+        defaultValues: { ...initial }
     });
-    // const watchType = useWatch({ control, name: 'type' })
-    const watchType = watch('type')
-    const { getFileType } = useFile();
+
+    const { fields: linkFields, append: appendLink, remove: removeLink } = useFieldArray({
+        control: control,
+        name: 'linksList',
+    });
+
+    const watchType = watch('type');
+    const { getFileType, getFileUrl } = useFile();
 
     const { mutate, isPending } = useMutation({
-        mutationFn: (v: LessonDto) =>
+        mutationFn: (v: LessonDto & {
+            coverImageUrl: File | null;
+            fileUrl: File | null
+        }) =>
             id
-                ? LessonsActions.ModifyLesson({ ...v, id: id }) : LessonsActions.AddLesson(v),
+                ? LessonsActions.ModifyLesson({
+                    ...v, id: id,
+                    coverImageUrl: v.coverImageUrl,
+                    fileUrl: v.fileUrl,
+                    links: v.linksList.map(el => el.link) as string[]
+                }) : LessonsActions.AddLesson({
+                    ...v,
+                    coverImageUrl: v.coverImageUrl,
+                    fileUrl: v.fileUrl,
+                    links: v.linksList.map(el => el.link) as string[]
+                }),
         onSuccess: () => {
-            reset({ ...initiale })
+            resetForm()
             setId("")
             setOpen(false)
             queryClient.invalidateQueries({ queryKey: [LESSONS_ENDPOINT] });
-
         },
     })
 
-    const onSubmit = handleSubmit(async (v: LessonDto) => {
+    const onSubmit = handleSubmit(async (v: LessonDto & {
+        coverImageUrl: File | null;
+        fileUrl: File | null
+    }) => {
         mutate(v);
     });
+
     const resetForm = () => {
         setId("")
-        reset({ ...initiale })
-        // setImageUrl('')
-
+        reset({ ...initial })
+        setUrl('')
+        setCoverUrl('')
     }
+
     const getTextType = () => {
         if (+watchType == 0) return "فيديو"
         else if (+watchType == 1) return "وثيقة"
         else if (+watchType == 2) return "ملف"
         else return "رابط"
-
     }
+
     useEffect(() => {
         if (lessonDto && id) {
-            reset({ ...lessonDto })
-            setValue("coverImageShow", lessonDto?.coverImageUrl ? lessonDto?.coverImageUrl as string : "")
-            setValue("fileUrlShow", lessonDto?.fileUrl ? lessonDto?.fileUrl as string : "")
+            const mappedLinks = lessonDto?.links?.map((link: string) => ({ link }));
+            console.log(typeof lessonDto.coverImageUrl);
+
+            reset({
+                linksList: mappedLinks,
+                description: '',
+                levelId: lessonDto.levelId,
+                id: lessonDto.id,
+                name: lessonDto.name,
+                expectedTimeOfCompletionInMinute: lessonDto.expectedTimeOfCompletionInMinute,
+                order: lessonDto.order,
+                text: lessonDto.text,
+                type: lessonDto.type,
+                coverImageUrl: null,
+                fileUrl: null
+            })
+            setUrl(getFileUrl(typeof lessonDto.fileUrl == 'string' ? lessonDto.fileUrl : ''))
+            setCoverUrl(getFileUrl(typeof lessonDto.coverImageUrl == 'string' ? lessonDto.coverImageUrl : ''))
 
         }
     }, [lessonDto, id])
 
-
     return (
         <DialogForm isForm onOpenChange={() => setOpen(false)} open={open} isLoading={isPending} title={id ? "تعديل الدرس" : "إضافة الدرس"} formProps={{ onSubmit: (e) => onSubmit(e) }} onClose={() => resetForm()} onReset={() => resetForm()}>
             <div className='grid grid-cols-2 gap-4'>
-                <div className="md:col-span-1 col-span-2">
+                <div className="col-span-2">
                     <Controller name='name' rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
                             {...field} id='name' label={"الاسم"}
-
                         />
                     }
                     />
@@ -112,7 +159,6 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
                                     MenuProps={MenuProps}
                                     {...field}
                                     error={!!fieldState.invalid}
-
                                 >
                                     {levels?.map((level) => (
                                         <MenuItem key={level.id} value={level.id}>
@@ -133,6 +179,16 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
                             {...field} id='order' label={"الترتيب"}
+                            type="number"
+                        />
+                    }
+                    />
+                </div>
+                <div className="md:col-span-1 col-span-2">
+                    <Controller name='expectedTimeOfCompletionInMinute' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
+                        <TextField error={!!fieldState.error} fullWidth
+                            helperText={fieldState.error?.message}
+                            {...field} id='time' label={"وقت انتهاء الدرس"}
                             type="number"
                         />
                     }
@@ -164,46 +220,64 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
                         } />
                     </FormControl>
                 </div>
-
+                {/* {JSON.stringify(url)} */}
                 {+watchType != 3 && <div className="col-span-2">
-                    <FileInput attachedFiles={lessonDto?.fileUrlShow ? [{
-                        id: lessonDto?.id ?? "",
-                        name: "صورة اللغة",
-                        url: lessonDto?.fileUrlShow,
-                        type: getFileType(lessonDto?.fileUrlShow) as FileType
+                    <FileInput attachedFiles={url as string ? [{
+                        id: uuid(),
+                        name: getTextType() + " " + "الدرس",
+                        url: url as string,
+                        type: getFileType(url as string) as FileType
                     }] : []} control={control} name='fileUrl' label={getTextType() + " " + "الدرس"}></FileInput>
-                    {/* <Controller control={control} name="fileUrl" render={({ field }) =>
-                        <FileUploader
-                            {...field}
-                            onChangeUrl={setFileUrl}
-                            url={fileUrl}
-                            label={getTextType() + " " + "الدرس"}
-                            text={'اختر' + " " + getTextType() + " " + "معين"}
-                            name="file"
-                            value={field.value}
-                            dtoId={uuidv4().toString()}
-                        />
-
-                    } /> */}
                 </div>
                 }
-                {+watchType == 3 && <div className="col-span-2">
-                    <Controller control={control} name="text" render={({ field, fieldState }) =>
+
+                {+watchType == 3 && (
+                    <div className="col-span-2 flex justify-between items-center">
+                        <Typography>الروابط : </Typography>
+                        <IconButton color="primary" onClick={() => appendLink({
+                            link: ''
+                        })}><Add /></IconButton>
+                    </div>
+                )}
+
+                {+watchType == 3 && linkFields.map((field, index) => (
+                    <div className="col-span-2 flex justify-center items-center w-full" key={field.id}>
+
+                        <Controller
+                            control={control}
+                            name={`linksList.${index}.link`}
+                            render={({ field, fieldState }) =>
+                                <TextField
+                                    error={!!fieldState.error}
+                                    fullWidth
+                                    helperText={fieldState.error?.message}
+                                    {...field}
+                                    label={`رابط ${index + 1}`}
+                                />
+                            }
+                        />
+                        <IconButton color="error" onClick={() => removeLink(index)}><Close /></IconButton>
+
+                    </div>
+                ))}
+
+                {/* {JSON.stringify(lessonDto?.coverImageUrl)} */}
+                <div className="col-span-2">
+                    <FileInput control={control} attachedFiles={coverUrl as string ? [{
+                        id: lessonDto?.id ?? "",
+                        name: "صورة اللغة",
+                        url: coverUrl as string,
+                        type: getFileType(coverUrl as string) as FileType
+                    }] : []} name='coverImageUrl' label={'اختر غلاف للدرس'}></FileInput>
+                </div>
+                <div className="col-span-2">
+                    <Controller name='text' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
-                            {...field} id='description' label={"ادخل الرابط"}
+                            {...field} id='text' label={"النص"}
                         />
-
-                    } />
-                </div>
-                }
-                <div className="col-span-2">
-                    <FileInput control={control} attachedFiles={lessonDto?.coverImageShow ? [{
-                        id: lessonDto?.id ?? "",
-                        name: "صورة اللغة",
-                        url: lessonDto?.coverImageShow,
-                        type: getFileType(lessonDto?.coverImageShow) as FileType
-                    }] : []} name='coverImageUrl' label={'اختر غلاف للدرس'}></FileInput>
+                    }
+                    />
                 </div>
                 <div className="col-span-2">
                     <Controller name='description' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
@@ -214,7 +288,6 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
                     }
                     />
                 </div>
-
             </div>
         </DialogForm>
     )

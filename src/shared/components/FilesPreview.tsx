@@ -2,7 +2,7 @@ import React from 'react'
 import { ListItemIcon, ListItemText, IconButton, List, ListItem, ListProps, ListItemProps, Card } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
 import { useFile } from '@/shared/hooks/useFile';
-type FileType = 'doc' | 'excel' | 'folder' | 'image' | 'pdf' | 'rar' | 'svg' | 'text' | 'txt' | 'video' | 'zip' | 'png' | 'word'
+type FileType = 'doc' | 'excel' | 'folder' | 'image' | 'pdf' | 'rar' | 'svg' | 'text' | 'txt' | 'video' | 'zip' | 'png' | 'word' | 'mp4'
 export interface Preview {
     type: FileType,
     name: string
@@ -23,6 +23,7 @@ export default function FilesPreview({ listPreview, onDelete, listProps, listIte
 
     return (
         <List sx={{ width: '100%', padding: 0, margin: 0, rounded: 1, }} {...listProps}>
+
             {
                 listPreview.map((preview, index) => (
                     <ListItem dense key={getFileUrl(preview.url)} sx={{ border: t => `1px solid ${t.palette.divider}`, borderRadius: 1, my: 1, overflowX: 'hidden' }} {...listItemProps}>
