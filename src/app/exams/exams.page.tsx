@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { EXAMS_ENDPOINT, ExamsActions } from '@/api/exams/actions';
 import ExamForm from './components/ExamForm';
 import { useNavigate } from 'react-router-dom';
-import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, Card, FormControl, IconButton, InputLabel, MenuItem, Select } from '@mui/material';
+import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, Card, Checkbox, FormControl, IconButton, InputLabel, MenuItem, Select } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { FaPlus, FaTrash } from 'react-icons/fa6';
 import { IoDocumentText } from 'react-icons/io5';
@@ -94,7 +94,7 @@ export default function Exams() {
                             id="panel3-header"
                         >
                             <div className='flex justify-between items-center w-full'>
-                                {exam.text}
+                                {exam.order} - {exam.text}
                                 <div className='flex justify-between items-center gap-2 mx-4'>
                                     <IconButton size="small" onClick={(e) => { e.stopPropagation(); setOpen(true); setExamId(exam.id) }} color="primary"><MdEdit /></IconButton>
                                     <IconButton size="small" onClick={(e) => { e.stopPropagation(); onDelete(exam.id) }} color="error"><MdOutlineDeleteForever /></IconButton>
@@ -103,9 +103,14 @@ export default function Exams() {
                         </AccordionSummary>
                         <AccordionDetails className='flex items-start flex-col gap-3'>
                             {exam.answers.map((answer, index) => (
-                                <h6>
-                                    {index + 1 + "- " + answer.text}
-                                </h6>
+                                <React.Fragment key={index}>
+                                    <h6>
+                                        {index + 1 + "- " + answer.text}
+
+                                    </h6>
+                                    <Checkbox checked={!!answer.isCorrect} />
+
+                                </React.Fragment>
 
                             ))}
                         </AccordionDetails>

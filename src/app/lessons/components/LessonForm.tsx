@@ -184,7 +184,7 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
                     }
                     />
                 </div>
-                <div className="md:col-span-1 col-span-2">
+                {+watchType == 1 && <div className="md:col-span-1 col-span-2">
                     <Controller name='expectedTimeOfCompletionInMinute' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
@@ -193,7 +193,7 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
                         />
                     }
                     />
-                </div>
+                </div>}
 
                 <div className="md:col-span-1 col-span-2">
                     <FormControl size="small" fullWidth>
@@ -207,6 +207,7 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
                                     MenuProps={MenuProps}
                                     {...field}
                                     error={!!fieldState.invalid}
+                                    disabled={lessonDto?.id ? true : false}
                                 >
                                     <MenuItem value={0}>فيديو</MenuItem>
                                     <MenuItem value={1}>وثيقة</MenuItem>
@@ -220,16 +221,25 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
                         } />
                     </FormControl>
                 </div>
-                {/* {JSON.stringify(url)} */}
-                {+watchType != 3 && <div className="col-span-2">
+
+
+                {+watchType == 0 && <div className="col-span-2">
                     <FileInput attachedFiles={url as string ? [{
                         id: uuid(),
-                        name: getTextType() + " " + "الدرس",
+                        name: "فيديو الدرس",
                         url: url as string,
                         type: getFileType(url as string) as FileType
-                    }] : []} control={control} name='fileUrl' label={getTextType() + " " + "الدرس"}></FileInput>
-                </div>
-                }
+                    }] : []} control={control} name='fileUrl' label={"فيديو الدرس"}></FileInput>
+                </div>}
+
+                {+watchType == 2 && <div className="col-span-2">
+                    <FileInput attachedFiles={url as string ? [{
+                        id: uuid(),
+                        name: "ملف الدرس",
+                        url: url as string,
+                        type: getFileType(url as string) as FileType
+                    }] : []} control={control} name='fileUrl' label={"ملف الدرس"}></FileInput>
+                </div>}
 
                 {+watchType == 3 && (
                     <div className="col-span-2 flex justify-between items-center">
@@ -246,8 +256,10 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
                         <Controller
                             control={control}
                             name={`linksList.${index}.link`}
+                            rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }}
                             render={({ field, fieldState }) =>
                                 <TextField
+
                                     error={!!fieldState.error}
                                     fullWidth
                                     helperText={fieldState.error?.message}
@@ -270,17 +282,17 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
                         type: getFileType(coverUrl as string) as FileType
                     }] : []} name='coverImageUrl' label={'اختر غلاف للدرس'}></FileInput>
                 </div>
-                <div className="col-span-2">
-                    <Controller name='text' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
+                {+watchType == 1 && <div className="col-span-2">
+                    <Controller name='text' control={control} render={({ field, fieldState }) =>
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
                             {...field} id='text' label={"النص"}
                         />
                     }
                     />
-                </div>
+                </div>}
                 <div className="col-span-2">
-                    <Controller name='description' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
+                    <Controller name='description' control={control} render={({ field, fieldState }) =>
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
                             {...field} id='description' label={"الوصف"}

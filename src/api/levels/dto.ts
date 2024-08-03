@@ -30,5 +30,6 @@ interface Lesson {
   order: number;
   description: string;
   fileUrl: string;
+  coverImageUrl: string;
   type: string;
 }

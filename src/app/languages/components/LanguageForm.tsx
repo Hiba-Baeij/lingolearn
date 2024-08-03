@@ -9,6 +9,7 @@ import { AccountCircle, Language, NoteAdd, Phone } from '@mui/icons-material'
 import { useLanguages } from '../useLanguages'
 import FileInput from '@/shared/components/FileInput'
 import { FileType, useFile } from '@/shared/hooks/useFile'
+import { MenuProps } from '@/config/theme/theme'
 
 type Props = {
     open: boolean;
@@ -26,18 +27,10 @@ const ITEM_HEIGHT = 48;
 
 export default function LanguageForm({ open, setOpen, id, setId }: Props) {
     const queryClient = useQueryClient();
-    // const [imageUrl, setImageUrl] = useState("");
     const { availablelanguages } = useLanguages();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const openMenu = Boolean(anchorEl);
     const { getFileType } = useFile();
 
-    const handleClickMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleCloseMenu = () => {
-        setAnchorEl(null);
-    };
 
     const { data: languageDto, isSuccess: isSuccessDetails } = useQuery({
         enabled: !!id,
@@ -84,47 +77,33 @@ export default function LanguageForm({ open, setOpen, id, setId }: Props) {
     return (
         <DialogForm isForm onOpenChange={() => setOpen(false)} open={open} isLoading={isPending} title={id ? "تعديل اللغة" : "إضافة اللغة"} formProps={{ onSubmit: (e) => onSubmit(e) }} onClose={() => resetForm()} onReset={() => resetForm()}>
             <div className='grid grid-cols-2 gap-4'>
-                <div className="col-span-2 flex items-center gap-3">
-                    <Controller name='name' rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
-                        <TextField error={!!fieldState.error} fullWidth
-                            helperText={fieldState.error?.message}
-                            {...field} id='name' label={"الاسم"}
-                        />
-                    }
-                    />
 
-                    <Button
-                        variant='contained'
-                        color="primary"
-                        id="basic-button"
-                        aria-controls={openMenu ? 'basic-menu' : undefined}
-                        aria-haspopup="true"
-                        aria-expanded={openMenu ? 'true' : undefined}
-                        onClick={handleClickMenu}
-                    >
-                        اختر لغة
-                    </Button>
-                    <Menu
-                        id="basic-menu"
-                        anchorEl={anchorEl}
-                        open={openMenu}
-                        onClose={handleCloseMenu}
-                        MenuListProps={{
-                            'aria-labelledby': 'basic-button',
-                        }}
-                        PaperProps={{
-                            style: {
-                                maxHeight: ITEM_HEIGHT * 4.5,
-                                width: '20ch',
-                            },
-                        }}
-                    >
-                        {
-                            availablelanguages?.map((lang, index) => (
-                                <MenuItem key={index} onClick={() => { setValue('name', lang.value); handleCloseMenu() }}>{lang.value}</MenuItem>
-                            ))
-                        }
-                    </Menu>
+                <div className="col-span-2">
+                    <FormControl size="small" fullWidth>
+                        <InputLabel id="language-id">الاسم</InputLabel>
+                        <Controller name="name" rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
+                            <>
+                                <Select
+                                    labelId="language-id"
+                                    fullWidth
+                                    label="الاسم"
+                                    MenuProps={MenuProps}
+                                    {...field}
+                                    error={!!fieldState.invalid}
+
+                                >
+                                    {
+                                        availablelanguages?.map((lang, index) => (
+                                            <MenuItem key={lang.value} value={lang.value}>{lang.value}</MenuItem>
+                                        ))
+                                    }
+                                </Select>
+                                <FormHelperText sx={{ color: '#d32f2f' }}>
+                                    {fieldState.error?.message}
+                                </FormHelperText>
+                            </>
+                        } />
+                    </FormControl>
                 </div>
                 <div className="col-span-2">
                     <Controller name='description' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>

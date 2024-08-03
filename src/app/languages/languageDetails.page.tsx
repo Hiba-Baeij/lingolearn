@@ -1,5 +1,5 @@
 import { LanguageDto } from '@/api/languages/dto'
-import { Box, Button, Card, CardMedia, Checkbox, CircularProgress, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, ListItemIcon, ListItemText, MenuItem, Select, SelectChangeEvent, Skeleton, TextField, Tooltip, Typography } from '@mui/material'
+import { Box, Button, Card, CardMedia, Checkbox, CircularProgress, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, ListItemIcon, ListItemText, Menu, MenuItem, Select, SelectChangeEvent, Skeleton, TextField, Tooltip, Typography } from '@mui/material'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { GET_ID_LANGUAGE_ENDPOINT, LanguagesActions, LANGUAGES_ENDPOINT } from '@/api/languages/actions'
@@ -11,6 +11,8 @@ import { useFile } from '@/shared/hooks/useFile'
 import { IoMdArrowBack } from 'react-icons/io'
 import { BsEye } from 'react-icons/bs'
 import { FaEye } from 'react-icons/fa6'
+import { MenuProps } from '@/config/theme/theme'
+import { useLanguages } from './useLanguages'
 
 const breadcrumbs = [
     {
@@ -29,16 +31,24 @@ const initiale = {
     imageFile: null,
 }
 
+const ITEM_HEIGHT = 48;
 export default function LanguageDetails() {
     const queryClient = useQueryClient();
-    const [imageUrl, setImageUrl] = useState("");
     const { id } = useParams();
-    const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const { getFileUrl } = useFile()
     const navigate = useNavigate()
     const [fileUrl, setFileUrl] = useState<string | null | undefined>('');
     const { openFileWindow } = useFile();
+    const { availablelanguages } = useLanguages();
+    const openMenu = Boolean(anchorEl);
 
+    const handleClickMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleCloseMenu = () => {
+        setAnchorEl(null);
+    };
     const { data: languageDto, isLoading } = useQuery({
         enabled: id != "new",
         queryKey: [GET_ID_LANGUAGE_ENDPOINT],
@@ -71,6 +81,8 @@ export default function LanguageDetails() {
     }
     const handleFileUpload = (payload: { file: File; base64: string }) => {
         setFileUrl(payload.base64);
+        console.log(payload.base64);
+
         setValue("imageFile", payload.file);
     };
 
@@ -84,7 +96,7 @@ export default function LanguageDetails() {
             setValue('description', languageDto?.description)
             // setValue('imageFile', languageDto?.imageFile)
             // setImageUrl(languageDto?.imageUrl)
-            setFileUrl(languageDto?.imageUrl)
+            setFileUrl(getFileUrl(languageDto?.imageUrl))
             console.log(languageDto?.imageUrl);
 
         }
@@ -97,59 +109,66 @@ export default function LanguageDetails() {
             <Card className='p-6'>
                 <h5>اللغة</h5>
                 <form onSubmit={onSubmit} className='grid grid-cols-3 gap-4 mt-4'>
-                    <div className="col-span-3 md:col-span-1">
+                    <div className="col-span-3 md:col-span-1 flex items-start gap-2">
                         <Controller name='name' rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
                             <TextField error={!!fieldState.error} fullWidth
                                 helperText={fieldState.error?.message}
+                                disabled
                                 {...field} id='name' label={"الاسم"}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Language />
-                                        </InputAdornment>
-                                    )
-                                }}
-
                             />
                         }
                         />
+
+                        <Button
+                            variant='contained'
+                            color="primary"
+                            id="basic-button"
+                            aria-controls={openMenu ? 'basic-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={openMenu ? 'true' : undefined}
+                            onClick={handleClickMenu}
+                        >
+                            اختر لغة
+                        </Button>
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorEl}
+                            open={openMenu}
+                            onClose={handleCloseMenu}
+                            MenuListProps={{
+                                'aria-labelledby': 'basic-button',
+                            }}
+                            PaperProps={{
+                                style: {
+                                    maxHeight: ITEM_HEIGHT * 4.5,
+                                    width: '20ch',
+                                },
+                            }}
+                        >
+                            {
+                                availablelanguages?.map((lang, index) => (
+                                    <MenuItem key={index} onClick={() => { setValue('name', lang.value); handleCloseMenu() }}>{lang.value}</MenuItem>
+                                ))
+                            }
+                        </Menu>
                     </div>
                     <div className="col-span-3 md:col-span-1">
                         <Controller name='description' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
                             <TextField error={!!fieldState.error} fullWidth
                                 helperText={fieldState.error?.message}
                                 {...field} id='description' label={"الوصف"}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <NoteAdd />
-                                        </InputAdornment>
-                                    )
-                                }}
                             />
                         }
                         />
                     </div>
 
                     <div className="col-span-3 md:col-span-1">
-                        {/* {imageUrl} */}
-                        {/* <Controller control={control} name="imageFile" render={({ field }) =>
-                            <FileUploader
-                                {...field}
-                                onChangeUrl={setImageUrl}
-                                url={imageUrl}
-                                // label="صورة اللغة"
-                                name="image"
-                                value={field.value}
-                                dtoId={languageDto?.id}
-                            />
-                        } /> */}
                         {fileUrl ? (
                             <div style={{ border: "1px solid #eee" }} className='w-full rounded-lg cursor-pointer flex justify-center items-center' onClick={handleIconClick} >
-                                <img src={languageDto?.imageUrl ? getFileUrl(languageDto?.imageUrl) : fileUrl} className='w-[260px] h-[230px] rounded-lg object-cover' alt="Profile" />
+                                <img src={fileUrl} className='w-[260px] h-[230px] rounded-lg object-cover' alt="Profile" />
                             </div>
                         ) : (
-                            <div className=' p-5 rounded-lg cursor-pointer flex justify-end items-end' onClick={handleIconClick} >
+                            <div style={{ border: "1px solid #eee" }} className='w-full rounded-lg cursor-pointer flex justify-center items-center' onClick={handleIconClick} >
                                 <img src='/non-image.svg' />
                             </div>
                         )}
@@ -181,7 +200,7 @@ export default function LanguageDetails() {
                                         <div className="col-span-3 md:col-span-1">
                                             <CardMedia
                                                 sx={{ height: 100, width: "100%", borderRadius: '5px' }}
-                                                image={lesson.fileUrl ? getFileUrl(lesson.fileUrl) : '/non-image.svg'}
+                                                image={lesson.coverImageUrl ? lesson.coverImageUrl : '/non-image.svg'}
                                                 title="image"
                                             />
                                             <div className='flex justify-between items-center w-full mt-3'>
