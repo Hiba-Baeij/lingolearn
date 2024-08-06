@@ -1,34 +1,34 @@
 import { useApi } from "@/shared/hooks/useApi";
-import { Exam } from "./dto";
+import { Challenge } from "./dto";
 import { serialize } from "object-to-formdata";
 import { Response } from "../auth/dto";
 
-export const EXAMS_ENDPOINT = "Dashboard/QuestionsBank/GetAll";
-export const ADD_EXAM_ENDPOINT = "Dashboard/QuestionsBank/Add";
-export const MODIFY_EXAM_ENDPOINT = "Dashboard/QuestionsBank/Modify";
-export const GET_ID_EXAM_ENDPOINT = "Dashboard/QuestionsBank/GetById";
-export const DELETE_EXAM_ENDPOINT = "Dashboard/QuestionsBank/Delete";
+export const CHALLENGES_ENDPOINT = "Dashboard/Challenge/GetAll";
+export const ADD_CHALLENGE_ENDPOINT = "Dashboard/Challenge/Add";
+export const MODIFY_CHALLENGE_ENDPOINT = "Dashboard/Challenge/Modify";
+export const GET_ID_CHALLENGE_ENDPOINT = "Dashboard/Challenge/GetById";
+export const DELETE_CHALLENGE_ENDPOINT = "Dashboard/Challenge/Delete";
 
 
-export class ExamsActions {
-    static async GetExams(levelId: string) {
+export class ChallengesActions {
+    static async GetChallenges() {
         try {
-            const res = await useApi<Response<Exam[]>>('GET', EXAMS_ENDPOINT + `${levelId ? `?levelId=${levelId}` : ''}`)
-            return res?.data.response as Exam[]
+            const res = await useApi<Response<Challenge[]>>('GET', CHALLENGES_ENDPOINT)
+            return res?.data.response as Challenge[]
         }
         catch (er) {
             console.log('No Record Found')
             throw (er)
         }
     }
-    static async GetByIdExam(id: string) {
+    static async GetByIdChallenge(id: string) {
         try {
-            const res = await useApi<Response<Exam>>('GET', GET_ID_EXAM_ENDPOINT, {}, {}, {
+            const res = await useApi<Response<Challenge>>('GET', GET_ID_CHALLENGE_ENDPOINT, {}, {}, {
                 params: {
                     id: id
                 }
             })
-            return res?.data.response as Exam
+            return res?.data.response as Challenge
         }
         catch (er) {
             console.log('No Record Found')
@@ -36,9 +36,9 @@ export class ExamsActions {
         }
     }
 
-    static async AddExam(payload: Exam) {
+    static async AddChallenge(payload: Challenge) {
         try {
-            const res = await useApi('POST', ADD_EXAM_ENDPOINT, { successMessage: "تمت الإضافة بنجاح", errorMessage: true }, payload)
+            const res = await useApi('POST', ADD_CHALLENGE_ENDPOINT, { successMessage: "تمت الإضافة بنجاح", errorMessage: true }, serialize(payload))
             return res
 
         }
@@ -47,9 +47,9 @@ export class ExamsActions {
             throw (er)
         }
     }
-    static async ModifyExam(payload: Exam) {
+    static async ModifyChallenge(payload: Challenge) {
         try {
-            const res = await useApi('POST', MODIFY_EXAM_ENDPOINT, { successMessage: "تم التعديل بنجاح", errorMessage: true }, payload)
+            const res = await useApi('POST', MODIFY_CHALLENGE_ENDPOINT, { successMessage: "تم التعديل بنجاح", errorMessage: true }, serialize(payload))
             return res
 
         }
@@ -59,8 +59,8 @@ export class ExamsActions {
         }
     }
 
-    static async DeleteExams(ids: string[]) {
-        await useApi('DELETE', DELETE_EXAM_ENDPOINT, { confirm: { title: "هل انت متأكد من حذف هذا العنصر", text: "سيتم حذف هذا العنصر ولم تستطيع استرداده" }, successMessage: "تم الحذف بنجاح" }, {}, {
+    static async DeleteChallenges(ids: string[]) {
+        await useApi('DELETE', DELETE_CHALLENGE_ENDPOINT, { confirm: { title: "هل انت متأكد من حذف هذا العنصر", text: "سيتم حذف هذا العنصر ولم تستطيع استرداده" }, successMessage: "تم الحذف بنجاح" }, {}, {
             data: ids
         })
     }

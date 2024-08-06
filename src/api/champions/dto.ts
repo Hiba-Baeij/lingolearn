@@ -1,8 +1,15 @@
-export interface Exam {
+export interface Challenge {
   id: string;
-  text: string;
-  order: number;
-  levelId: string;
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  points: number;
+  languageId: string;
+  imageFile: File | null;
+  coverImageFile: File | null;
+  imageUrl: string;
+  coverImageUrl: string;
   answers: Answer[];
 }
 

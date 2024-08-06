@@ -229,7 +229,7 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
                         name: "فيديو الدرس",
                         url: url as string,
                         type: getFileType(url as string) as FileType
-                    }] : []} control={control} name='fileUrl' label={"فيديو الدرس"}></FileInput>
+                    }] : []} control={control} name='fileUrl' label={"اختر فيديو الدرس"}></FileInput>
                 </div>}
 
                 {+watchType == 2 && <div className="col-span-2">

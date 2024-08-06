@@ -128,7 +128,7 @@ export default function FileInput<T extends FieldValues>({
 
         return <div className="flex items-center gap-2">
             <MdOutlineAttachFile size={20}></MdOutlineAttachFile >
-            <Typography>ارفع ملف</Typography>
+            <Typography>{label ? label : "ارفع ملف"}</Typography>
         </div>
 
 
@@ -158,7 +158,7 @@ export default function FileInput<T extends FieldValues>({
                 control={control} rules={rules} render={(context) => (
                     <>
                         <label htmlFor={`input-file-${id}`}>
-                            <InputLabel>{label}</InputLabel>
+                            {/* <InputLabel>{label}</InputLabel> */}
                             <div className="flex flex-col">
                                 <Box
                                     sx={(t) => ({
