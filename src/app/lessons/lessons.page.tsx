@@ -1,5 +1,5 @@
 import Page, { BreadCrumbs } from '@/shared/components/Page'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import MaterialTable from '@/shared/components/table/MaterialTable';
 import { HeadsType } from '@/shared/components/table/CrudTable';
 import { Lessons as LessonsType } from '@/api/lessons/dto';
@@ -9,8 +9,9 @@ import LessonForm from './components/LessonForm';
 import { FaUsers } from 'react-icons/fa6';
 import { useLevels } from '../levels/useLevels';
 import { useNavigate } from 'react-router-dom';
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { FormControl, IconButton, InputLabel, MenuItem, Select } from '@mui/material';
 import { MenuProps } from '@/config/theme/theme';
+import { IoMdClose } from 'react-icons/io';
 
 
 const breadcrumbs = [
@@ -32,6 +33,7 @@ export default function Lessons() {
     const { getLevel } = useLevels();
     const navigate = useNavigate();
     const { levels } = useLevels();
+    const [levelId, setLevelId] = useState("")
 
     const { data: lessons, isLoading } = useQuery({
         queryKey: [LESSONS_ENDPOINT],
@@ -70,11 +72,19 @@ export default function Lessons() {
         mutateDelete(id);
     };
 
+    const filterLessons = useMemo(() => {
+        return lessons?.filter((item) =>
+            levelId ? item.levelId?.toLowerCase().includes(levelId.toLowerCase()) : true
+        );
+    }, [lessons, levelId]);
+
+
+
     return (
         <Page title={"الدروس"} breadcrumbs={breadcrumbs} icon={<FaUsers fontSize={20} />}>
             <MaterialTable
                 heads={heads}
-                rows={lessons}
+                rows={filterLessons}
                 selectable
                 isLoading={isLoading}
                 actions={['create', 'delete', 'details', 'edit']}
@@ -90,7 +100,11 @@ export default function Lessons() {
                                 fullWidth
                                 label="ابحث عن مستوى معين"
                                 MenuProps={MenuProps}
-
+                                value={levelId}
+                                onChange={(e) => setLevelId(e.target.value)}
+                                endAdornment={
+                                    levelId ? <IconButton onClick={() => setLevelId('')}> <IoMdClose /> </IconButton> : null
+                                }
                             >
                                 {levels?.map((level) => (
                                     <MenuItem key={level.id} value={level.id}>

@@ -1,5 +1,5 @@
 import Page, { BreadCrumbs } from '@/shared/components/Page'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import MaterialTable from '@/shared/components/table/MaterialTable';
 import { HeadsType } from '@/shared/components/table/CrudTable';
 import { StudentDto, Students as StudentsType } from '@/api/students/dto';
@@ -27,6 +27,7 @@ const breadcrumbs = [
 export default function Students() {
     const [open, setOpen] = useState(false)
     const [studentId, setStudentId] = useState("")
+    const [searchItem, setSearchItem] = useState("")
     const queryClient = useQueryClient();
     const { getFileUrl } = useFile()
 
@@ -39,7 +40,7 @@ export default function Students() {
         {
             key: 'imageUrl',
             label: "صورة الشخصية",
-            customRenderer: (item => item.imageUrl ? <img className='w-[40px] rounded-full' src={getFileUrl(item.imageUrl)} alt={'user'} /> : <img className='w-[40px] rounded-full' src={'/user.jpg'} alt={'user'} />)
+            customRenderer: (item => item.imageUrl ? <img className='w-[40px] h-[40px] rounded-full' src={getFileUrl(item.imageUrl)} alt={'user'} /> : <img className='w-[40px] rounded-full' src={'/user.jpg'} alt={'user'} />)
 
         },
         {
@@ -78,11 +79,17 @@ export default function Students() {
         mutateDelete(id);
     };
 
+    const filterStudents = useMemo(() => {
+        return students?.filter((item) =>
+            searchItem ? item.fullName?.toLowerCase().includes(searchItem.toLowerCase()) : true
+        );
+    }, [students, searchItem]);
+
     return (
         <Page title={"الطلاب"} breadcrumbs={breadcrumbs} icon={<FaUsers fontSize={20} />}>
             <MaterialTable
                 heads={heads}
-                rows={students}
+                rows={filterStudents}
                 selectable
                 isLoading={isLoading}
                 actions={['create', 'delete', 'details', 'edit']}
@@ -91,7 +98,7 @@ export default function Students() {
                 onCreate={() => setOpen(true)}
                 moreActions={
                     <>
-                        <TextField sx={{ width: "500px" }} id='fullName' label={"ابحث عن اسم الطالب"} />
+                        <TextField value={searchItem} onChange={(e) => setSearchItem(e.target.value)} sx={{ width: "500px" }} id='fullName' label={"ابحث عن اسم الطالب"} />
                     </>
                 }
             ></MaterialTable>

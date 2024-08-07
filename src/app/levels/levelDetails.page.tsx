@@ -1,6 +1,6 @@
 import { LevelDto } from '@/api/levels/dto'
 import DialogForm from '@/shared/components/DialogForm'
-import { Card, Checkbox, FormControl, FormHelperText, InputAdornment, InputLabel, ListItemIcon, ListItemText, MenuItem, Select, SelectChangeEvent, TextField, CardMedia, Skeleton, IconButton, Tooltip, Box, Button, CircularProgress } from '@mui/material';
+import { Card, Checkbox, FormControl, FormHelperText, InputAdornment, InputLabel, ListItemIcon, ListItemText, MenuItem, Select, SelectChangeEvent, TextField, CardMedia, Skeleton, IconButton, Tooltip, Box, Button, CircularProgress, LinearProgress } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { GET_ID_LEVEL_ENDPOINT, LevelsActions, LEVELS_ENDPOINT } from '@/api/levels/actions'
@@ -14,6 +14,7 @@ import { GET_NAMES_LANGUAGE_ENDPOINT, LanguagesActions } from '@/api/languages/a
 import Page from '@/shared/components/Page'
 import { useNavigate, useParams } from 'react-router-dom'
 import { IoMdArrowBack } from 'react-icons/io';
+import LessonForm from '../lessons/components/LessonForm';
 
 const breadcrumbs = [
     {
@@ -38,6 +39,8 @@ export default function LevelDetails() {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
     const { id } = useParams();
+    const [open, setOpen] = useState(false)
+    const [lessonId, setLessonId] = useState("")
 
     const { data: levelDto, isLoading } = useQuery({
         enabled: !!id,
@@ -79,7 +82,7 @@ export default function LevelDetails() {
         onSuccess: () => {
             reset({ ...initiale })
             queryClient.invalidateQueries({ queryKey: [LEVELS_ENDPOINT] });
-
+            navigate('/levels')
         },
     })
 
@@ -102,78 +105,84 @@ export default function LevelDetails() {
 
     return (
         <Page title={'تفاصيل المستوى'} breadcrumbs={breadcrumbs}>
-            <Card className='p-6'>
-                <h5>المستوى</h5>
-                <form onSubmit={onSubmit} className='grid grid-cols-3 gap-4 mt-5'>
-                    <div className="md:col-span-1 col-span-3">
-                        <Controller name='name' rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
-                            <TextField error={!!fieldState.error} fullWidth
-                                helperText={fieldState.error?.message}
-                                {...field} id='name' label={"الاسم"}
+            <Card>
+                {isLoading ? <Box sx={{ width: '100%' }}>
+                    <LinearProgress color="primary" />
+                </Box> : null}
+                <div className='p-6'>
 
-                            />
-                        }
-                        />
-                    </div>
-                    <div className="md:col-span-1 col-span-3">
-                        <Controller name='order' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
-                            <TextField error={!!fieldState.error} fullWidth
-                                helperText={fieldState.error?.message}
-                                {...field} id='order' label={"الترتيب"}
-                                type="number"
-                            />
-                        }
-                        />
-                    </div>
-                    <div className="md:col-span-1 col-span-3">
-                        <Controller name='description' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
-                            <TextField error={!!fieldState.error} fullWidth
-                                helperText={fieldState.error?.message}
-                                {...field} id='description' label={"الوصف"}
-                            />
-                        }
-                        />
-                    </div>
-                    <div className="md:col-span-1 col-span-3">
-                        <FormControl size="small" fullWidth>
-                            <InputLabel id="language-id">اللغة</InputLabel>
-                            <Controller name="languageId" rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
-                                <>
-                                    <Select
-                                        labelId="language-id"
-                                        fullWidth
-                                        label="اللغة"
-                                        MenuProps={MenuProps}
-                                        {...field}
-                                        error={!!fieldState.invalid}
+                    <h5>المستوى</h5>
+                    <form onSubmit={onSubmit} className='grid grid-cols-3 gap-4 mt-5'>
+                        <div className="md:col-span-1 col-span-3">
+                            <Controller name='name' rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
+                                <TextField error={!!fieldState.error} fullWidth
+                                    helperText={fieldState.error?.message}
+                                    {...field} id='name' label={"الاسم"}
 
-                                    >
-                                        {languages?.map((lang) => (
-                                            <MenuItem key={lang.id} value={lang.id}>
-                                                {lang.name}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                    <FormHelperText sx={{ color: '#d32f2f' }}>
-                                        {fieldState.error?.message}
-                                    </FormHelperText>
-                                </>
-                            } />
-                        </FormControl>
-                    </div>
-                    <Box display={'flex'} flexWrap="wrap" justifyContent={{ lg: 'flex-start', md: "flex-start", xs: "center" }} width={'100%'} alignContent='center' gap={2}>
-                        <Button variant='contained' startIcon={<Edit />} type="submit">
-                            {
-                                isPending ? <CircularProgress color='inherit' size={24} /> : "تعديل"
+                                />
                             }
-                        </Button>
-                        <Button variant='outlined' color="secondary" startIcon={<IoMdArrowBack />} onClick={() => navigate('/levels')}>رجوع</Button>
-                    </Box>
+                            />
+                        </div>
+                        <div className="md:col-span-1 col-span-3">
+                            <Controller name='order' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
+                                <TextField error={!!fieldState.error} fullWidth
+                                    helperText={fieldState.error?.message}
+                                    {...field} id='order' label={"الترتيب"}
+                                    type="number"
+                                />
+                            }
+                            />
+                        </div>
+                        <div className="md:col-span-1 col-span-3">
+                            <Controller name='description' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
+                                <TextField error={!!fieldState.error} fullWidth
+                                    helperText={fieldState.error?.message}
+                                    {...field} id='description' label={"الوصف"}
+                                />
+                            }
+                            />
+                        </div>
+                        <div className="md:col-span-1 col-span-3">
+                            <FormControl size="small" fullWidth>
+                                <InputLabel id="language-id">اللغة</InputLabel>
+                                <Controller name="languageId" rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
+                                    <>
+                                        <Select
+                                            labelId="language-id"
+                                            fullWidth
+                                            label="اللغة"
+                                            MenuProps={MenuProps}
+                                            {...field}
+                                            error={!!fieldState.invalid}
 
-                </form>
+                                        >
+                                            {languages?.map((lang) => (
+                                                <MenuItem key={lang.id} value={lang.id}>
+                                                    {lang.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                        <FormHelperText sx={{ color: '#d32f2f' }}>
+                                            {fieldState.error?.message}
+                                        </FormHelperText>
+                                    </>
+                                } />
+                            </FormControl>
+                        </div>
+                        <Box display={'flex'} flexWrap="wrap" justifyContent={{ lg: 'flex-start', md: "flex-start", xs: "center" }} width={'100%'} alignContent='center' gap={2}>
+                            <Button variant='contained' startIcon={<Edit />} type="submit">
+                                {
+                                    isPending ? <CircularProgress color='inherit' size={24} /> : "تعديل"
+                                }
+                            </Button>
+                            <Button variant='outlined' color="secondary" startIcon={<IoMdArrowBack />} onClick={() => navigate('/levels')}>رجوع</Button>
+                        </Box>
+                    </form>
+                </div>
 
 
             </Card>
+
             <Card className='p-6 mt-5'>
                 <h5>دروس {levelDto?.name}</h5>
                 <div className='grid grid-cols-12 gap-4 mt-4'>
@@ -189,7 +198,7 @@ export default function LevelDetails() {
                                 <div className='flex justify-between items-center w-full mt-3 px-2'>
                                     <h6 className='text-sm'>{lesson.name}</h6>
                                     <Tooltip title='رؤية الدرس' >
-                                        <IconButton size='small' onClick={() => navigate(`/languages/view-lesson/${lesson.id}`)}> <FaEye /></IconButton>
+                                        <IconButton size='small' onClick={() => { setOpen(true); setLessonId(levelDto?.lessons[index]?.id) }}> <FaEye /></IconButton>
                                     </Tooltip>
                                 </div>
                                 <p className='mt-2 px-2 pb-4 text-sm'>{lesson.description.length > 10 ? lesson.description.slice(0, 50) + "......" : lesson.description}</p>
@@ -219,6 +228,8 @@ export default function LevelDetails() {
 
                 }
             </Card>
+            <LessonForm setId={(value) => setLessonId(value)} id={lessonId} open={open} setOpen={(value) => setOpen(value)}></LessonForm>
+
 
         </Page>
     )

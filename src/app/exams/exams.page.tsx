@@ -103,14 +103,12 @@ export default function Exams() {
                         </AccordionSummary>
                         <AccordionDetails className='flex items-start flex-col gap-3'>
                             {exam.answers.map((answer, index) => (
-                                <React.Fragment key={index}>
+                                <div className="flex justify-start items-center" key={index}>
+                                    <Checkbox checked={!!answer.isCorrect} />
                                     <h6>
                                         {index + 1 + "- " + answer.text}
-
                                     </h6>
-                                    <Checkbox checked={!!answer.isCorrect} />
-
-                                </React.Fragment>
+                                </div>
 
                             ))}
                         </AccordionDetails>

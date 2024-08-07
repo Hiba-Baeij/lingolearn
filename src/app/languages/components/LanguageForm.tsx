@@ -28,8 +28,8 @@ const ITEM_HEIGHT = 48;
 export default function LanguageForm({ open, setOpen, id, setId }: Props) {
     const queryClient = useQueryClient();
     const { availablelanguages } = useLanguages();
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const { getFileType } = useFile();
+    const { getFileType, openFileWindow } = useFile();
+    const [fileUrl, setFileUrl] = useState<string | null | undefined>('');
 
 
     const { data: languageDto, isSuccess: isSuccessDetails } = useQuery({
@@ -47,13 +47,20 @@ export default function LanguageForm({ open, setOpen, id, setId }: Props) {
             id
                 ? LanguagesActions.ModifyLanguage({ ...v, id: id }) : LanguagesActions.AddLanguage(v),
         onSuccess: () => {
-            reset({ ...initiale })
-            setId("")
+            resetForm()
             setOpen(false)
             queryClient.invalidateQueries({ queryKey: [LANGUAGES_ENDPOINT] });
 
         },
     })
+    const handleFileUpload = (payload: { file: File; base64: string }) => {
+        setFileUrl(payload.base64);
+        setValue("imageFile", payload.file);
+    };
+
+    const handleIconClick = () => {
+        openFileWindow(handleFileUpload);
+    };
 
     const onSubmit = handleSubmit(async (v: LanguageDto) => {
         mutate(v);
@@ -61,14 +68,14 @@ export default function LanguageForm({ open, setOpen, id, setId }: Props) {
     const resetForm = () => {
         setId("")
         reset({ ...initiale })
-        // setImageUrl('')
+        setFileUrl('')
 
     }
     useEffect(() => {
         if (languageDto && id) {
             setValue('name', languageDto?.name)
             setValue('description', languageDto?.description)
-            // setImageUrl(languageDto?.imageUrl ? languageDto?.imageUrl : '')
+            setFileUrl(languageDto?.imageUrl ? languageDto?.imageUrl : '')
 
         }
     }, [languageDto, id])
@@ -114,8 +121,18 @@ export default function LanguageForm({ open, setOpen, id, setId }: Props) {
                     }
                     />
                 </div>
-
                 <div className="col-span-2">
+                    {fileUrl ? (
+                        <div style={{ border: "1px solid #eee" }} className='w-full rounded-lg cursor-pointer flex justify-center items-center' onClick={handleIconClick} >
+                            <img src={fileUrl} className='w-[260px] h-[230px] rounded-lg object-cover' alt="Profile" />
+                        </div>
+                    ) : (
+                        <div style={{ border: "1px solid #eee" }} className='w-full rounded-lg cursor-pointer flex justify-center items-center' onClick={handleIconClick} >
+                            <img src='/non-image.svg' />
+                        </div>
+                    )}
+                </div>
+                {/* <div className="col-span-2">
                     <FileInput attachedFiles={languageDto?.imageUrl ? [{
                         id: languageDto?.id ?? "",
                         name: "صورة اللغة",
@@ -123,7 +140,7 @@ export default function LanguageForm({ open, setOpen, id, setId }: Props) {
                         type: getFileType(languageDto?.imageUrl) as FileType
                     }] : []} control={control} name='imageFile'></FileInput>
 
-                </div>
+                </div> */}
 
             </div>
         </DialogForm>

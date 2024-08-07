@@ -84,7 +84,6 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
                 }),
         onSuccess: () => {
             resetForm()
-            setId("")
             setOpen(false)
             queryClient.invalidateQueries({ queryKey: [LESSONS_ENDPOINT] });
         },
@@ -98,9 +97,9 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
     });
 
     const resetForm = () => {
-        setId("")
         reset({ ...initial })
         setUrl('')
+        setId("")
         setCoverUrl('')
     }
 
@@ -118,7 +117,6 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
 
             reset({
                 linksList: mappedLinks,
-                description: '',
                 levelId: lessonDto.levelId,
                 id: lessonDto.id,
                 name: lessonDto.name,
@@ -126,6 +124,7 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
                 order: lessonDto.order,
                 text: lessonDto.text,
                 type: lessonDto.type,
+                description: lessonDto.description,
                 coverImageUrl: null,
                 fileUrl: null
             })
@@ -207,7 +206,7 @@ export default function LessonForm({ open, setOpen, id, setId }: Props) {
                                     MenuProps={MenuProps}
                                     {...field}
                                     error={!!fieldState.invalid}
-                                    disabled={lessonDto?.id ? true : false}
+                                    disabled={id ? true : false}
                                 >
                                     <MenuItem value={0}>فيديو</MenuItem>
                                     <MenuItem value={1}>وثيقة</MenuItem>

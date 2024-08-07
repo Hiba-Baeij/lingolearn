@@ -61,8 +61,7 @@ export default function ChallengeForm({ open, setOpen, id, setId }: Props) {
                     ...v
                 }),
         onSuccess: () => {
-            reset({ ...initiale })
-            setId("")
+            resetForm()
             setOpen(false)
             queryClient.invalidateQueries({ queryKey: [CHALLENGES_ENDPOINT] });
 
@@ -75,13 +74,8 @@ export default function ChallengeForm({ open, setOpen, id, setId }: Props) {
     const resetForm = () => {
         setId("")
         reset({ ...initiale })
-
-    }
-    const indexText = (index: number) => {
-        if (index == 0) return "الإجابة الأولى"
-        else if (index == 1) return "الإجابة الثانية"
-        else if (index == 2) return "الإجابة الثالثة"
-        else return "الإجابة الرابعة"
+        setUrl("")
+        setCoverUrl("")
 
     }
 
@@ -89,6 +83,17 @@ export default function ChallengeForm({ open, setOpen, id, setId }: Props) {
         if (challengeDto && id) {
             reset({
                 ...challengeDto
+            })
+            reset({
+                id: challengeDto.id,
+                description: challengeDto.description,
+                endDate: challengeDto.endDate,
+                startDate: challengeDto.startDate,
+                languageId: challengeDto.languageId,
+                points: challengeDto.points,
+                name: challengeDto.name,
+                coverImageFile: null,
+                imageFile: null
             })
             setUrl(challengeDto.imageUrl)
             setCoverUrl(challengeDto.coverImageUrl)
@@ -98,7 +103,7 @@ export default function ChallengeForm({ open, setOpen, id, setId }: Props) {
     return (
         <DialogForm size='md' isForm onOpenChange={() => setOpen(false)} open={open} isLoading={isPending} title={id ? "تعديل تحدي" : "إضافة تحدي"} formProps={{ onSubmit: (e) => onSubmit(e) }} onClose={() => resetForm()} onReset={() => resetForm()}>
             <div className='grid grid-cols-6 gap-4'>
-                <div className="md:col-span-2 col-span-6">
+                <div className="md:col-span-3 col-span-6">
                     <Controller name='name' rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
@@ -109,7 +114,7 @@ export default function ChallengeForm({ open, setOpen, id, setId }: Props) {
                     }
                     />
                 </div>
-                <div className="md:col-span-2 col-span-6">
+                <div className="md:col-span-3 col-span-6">
                     <FormControl size="small" fullWidth>
                         <InputLabel id="lang-id">اللغة</InputLabel>
                         <Controller name="languageId" rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
@@ -136,20 +141,9 @@ export default function ChallengeForm({ open, setOpen, id, setId }: Props) {
                         } />
                     </FormControl>
                 </div>
-                <div className="md:col-span-2 col-span-6">
-                    <Controller name='points' rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
-                        <TextField error={!!fieldState.error} fullWidth
-                            helperText={fieldState.error?.message}
-                            {...field} id='points' label={"النقاط"}
-                            onFocus={(e) => e.target.select()}
-                            type="number"
 
-                        />
-                    }
-                    />
-                </div>
 
-                <div className="md:col-span-2 col-span-6">
+                <div className="md:col-span-3 col-span-6">
                     <Controller name='startDate' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
@@ -163,7 +157,7 @@ export default function ChallengeForm({ open, setOpen, id, setId }: Props) {
                     }
                     />
                 </div>
-                <div className="md:col-span-2 col-span-6">
+                <div className="md:col-span-3 col-span-6">
                     <Controller name='endDate' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
@@ -179,7 +173,20 @@ export default function ChallengeForm({ open, setOpen, id, setId }: Props) {
                     />
                 </div>
 
-                <div className="md:col-span-2 col-span-6">
+                <div className="md:col-span-3 col-span-6">
+                    <Controller name='points' rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
+                        <TextField error={!!fieldState.error} fullWidth
+                            helperText={fieldState.error?.message}
+                            {...field} id='points' label={"النقاط"}
+                            onFocus={(e) => e.target.select()}
+                            type="number"
+
+                        />
+                    }
+                    />
+                </div>
+
+                <div className="md:col-span-3 col-span-6">
                     <Controller name='description' rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}

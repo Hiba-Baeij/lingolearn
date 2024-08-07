@@ -10,6 +10,7 @@ import { MdOutlineDeleteForever, MdEdit } from "react-icons/md";
 import NoData from '@/shared/components/NoData';
 import { CHALLENGEQUESTIONS_ENDPOINT, ChallengesActions } from '@/api/champions/actions';
 import BankQuestionForm from './components/BankQuestion';
+import { IoMdArrowBack } from 'react-icons/io';
 
 
 const breadcrumbs = [
@@ -29,6 +30,7 @@ export default function BankQuestionsPage() {
   const [questionId, setQuestionId] = useState("")
   const queryClient = useQueryClient();
   const { id } = useParams();
+  const navigate = useNavigate()
 
   const { data: questions, isLoading } = useQuery({
     queryKey: [CHALLENGEQUESTIONS_ENDPOINT],
@@ -51,10 +53,12 @@ export default function BankQuestionsPage() {
 
   return (
     <Page title={"بنك الأسئلة"} breadcrumbs={breadcrumbs} icon={<IoDocumentText fontSize={20} />}>
-      <div className="flex justify-end items-end">
+      <div className="flex justify-end items-end gap-3">
+        <Button variant='outlined' color="secondary" startIcon={<IoMdArrowBack />} onClick={() => navigate('/champions')}>رجوع</Button>
         <Button onClick={() => setOpen(true)} endIcon={<FaPlus size={16} />} variant='contained'>
           إضافة
         </Button>
+
 
       </div>
 
@@ -76,14 +80,14 @@ export default function BankQuestionsPage() {
             </AccordionSummary>
             <AccordionDetails className='flex items-start flex-col gap-3'>
               {question.answers.map((answer, index) => (
-                <React.Fragment key={index}>
+                <div className="flex justify-start items-center" key={index}>
+                  <Checkbox checked={!!answer.isCorrect} />
                   <h6>
                     {index + 1 + "- " + answer.text}
 
                   </h6>
-                  <Checkbox checked={!!answer.isCorrect} />
 
-                </React.Fragment>
+                </div>
 
               ))}
             </AccordionDetails>

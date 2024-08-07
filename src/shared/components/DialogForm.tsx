@@ -7,6 +7,7 @@ import {
     DialogProps,
     DialogTitle,
     IconButton,
+    LinearProgress,
     Typography,
 } from "@mui/material";
 import React, {
@@ -37,6 +38,7 @@ interface FormProps {
     appendActions?: ReactNode;
     disableAction?: boolean;
     isLoading?: boolean;
+    isPendingData?: boolean;
     size?: DialogProps["maxWidth"];
 }
 
@@ -66,6 +68,7 @@ export default function DialogForm(
         isForm,
         disableAction,
         isLoading,
+        isPendingData,
         onOpenChange,
         open,
         onReset,
@@ -83,6 +86,9 @@ export default function DialogForm(
             }}
         >
             <RenderContent {...props}>
+                {/* {isPendingData ? <Box sx={{ width: '100%' }}>
+                    <LinearProgress color="primary" />
+                </Box> : null} */}
                 <Box
                     display={"flex"}
                     alignItems="center"

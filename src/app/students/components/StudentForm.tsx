@@ -29,9 +29,9 @@ const initiale = {
 
 export default function StudentForm({ open, setOpen, id, setId }: Props) {
     const queryClient = useQueryClient();
-    const [imageUrl, setImageUrl] = useState("");
     const [block, setBlock] = useState(false);
-    const { getFileType } = useFile();
+    const { getFileType, openFileWindow } = useFile();
+    const [fileUrl, setFileUrl] = useState<string | null | undefined>('');
 
     const { data: studentDto, isSuccess: isSuccessDetails } = useQuery({
         enabled: !!id,
@@ -48,9 +48,8 @@ export default function StudentForm({ open, setOpen, id, setId }: Props) {
             id
                 ? StudentsActions.ModifyStudent({ ...v, id: id, birthDate: v.birthDate == "" ? null : v.birthDate }) : StudentsActions.AddStudent(v),
         onSuccess: () => {
-            reset({ ...initiale })
-            setId("")
             setOpen(false)
+            resetForm()
             queryClient.invalidateQueries({ queryKey: [STUDENTS_ENDPOINT] });
 
         },
@@ -63,9 +62,20 @@ export default function StudentForm({ open, setOpen, id, setId }: Props) {
         }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [STUDENTS_ENDPOINT] });
+            resetForm()
 
         },
     })
+
+    const handleFileUpload = (payload: { file: File; base64: string }) => {
+        setFileUrl(payload.base64);
+        setValue("imageFile", payload.file);
+    };
+
+    const handleIconClick = () => {
+        openFileWindow(handleFileUpload);
+    };
+
 
     const onSubmit = handleSubmit(async (v: StudentDto) => {
         console.log(typeof v.birthDate);
@@ -75,7 +85,7 @@ export default function StudentForm({ open, setOpen, id, setId }: Props) {
     const resetForm = () => {
         setId("")
         reset({ ...initiale })
-        setImageUrl('')
+        setFileUrl('')
 
     }
     const onBlock = () => {
@@ -90,10 +100,10 @@ export default function StudentForm({ open, setOpen, id, setId }: Props) {
             setValue('fullName', studentDto?.fullName)
             setValue('gender', studentDto?.gender)
             setValue('email', studentDto?.email)
-            setValue('birthDate', moment(studentDto?.birthDate).format("YYYY-MM-DD"))
+            setValue('birthDate', studentDto?.birthDate ? moment(studentDto?.birthDate).format("YYYY-MM-DD") : '')
             setValue('phoneNumber', studentDto?.phoneNumber)
             // setValue('imageFile', studentDto?.imageFile)
-            setImageUrl(studentDto?.imageUrl ? studentDto?.imageUrl : '')
+            setFileUrl(studentDto?.imageUrl ? studentDto?.imageUrl : '')
             setBlock(studentDto?.isBlock)
 
         }
@@ -180,7 +190,7 @@ export default function StudentForm({ open, setOpen, id, setId }: Props) {
 
                 </div>
                 <div className="col-span-2">
-                    <Controller name='birthDate' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
+                    <Controller name='birthDate' control={control} render={({ field, fieldState }) =>
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
                             {...field} name='birthDate' id='birthDate' label={"تاريخ الميلاد"}
@@ -200,15 +210,17 @@ export default function StudentForm({ open, setOpen, id, setId }: Props) {
                     }
                     />
                 </div>
+                {/* {JSON.stringify(fileUrl)} */}
                 <div className="col-span-2">
-                    {/* {imageUrl} */}
-                    <FileInput attachedFiles={studentDto?.imageUrl ? [{
-                        id: studentDto?.id ?? "",
-                        name: "صورة الشخصية",
-                        url: studentDto?.imageUrl,
-                        type: getFileType(studentDto?.imageUrl) as FileType
-                    }] : []} control={control} name='imageFile'></FileInput>
-
+                    {fileUrl ? (
+                        <div style={{ border: "1px solid #eee" }} className='w-full rounded-lg cursor-pointer flex justify-center items-center' onClick={handleIconClick} >
+                            <img src={fileUrl} className='w-[260px] h-[230px] rounded-lg object-cover' alt="Profile" />
+                        </div>
+                    ) : (
+                        <div style={{ border: "1px solid #eee" }} className='w-full rounded-lg cursor-pointer flex justify-center items-center' onClick={handleIconClick} >
+                            <img src='/non-image.svg' />
+                        </div>
+                    )}
                 </div>
 
             </div>

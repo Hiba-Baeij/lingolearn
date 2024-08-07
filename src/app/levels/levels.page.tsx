@@ -1,5 +1,5 @@
 import Page, { BreadCrumbs } from '@/shared/components/Page'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import MaterialTable from '@/shared/components/table/MaterialTable';
 import { HeadsType } from '@/shared/components/table/CrudTable';
 import { LevelDto, Levels as LevelsType } from '@/api/levels/dto';
@@ -9,8 +9,9 @@ import LevelForm from './components/LevelForm';
 import { FaUsers } from 'react-icons/fa6';
 import { useLanguages } from '../languages/useLanguages';
 import { useNavigate } from 'react-router-dom';
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { FormControl, IconButton, InputLabel, MenuItem, Select } from '@mui/material';
 import { MenuProps } from '@/config/theme/theme';
+import { IoMdClose } from 'react-icons/io';
 
 
 const breadcrumbs = [
@@ -28,6 +29,7 @@ const breadcrumbs = [
 export default function Levels() {
     const [open, setOpen] = useState(false)
     const [levelId, setLevelId] = useState("")
+    const [langId, setLangId] = useState("")
     const queryClient = useQueryClient();
     const { getLanguage, languages } = useLanguages();
     const navigate = useNavigate();
@@ -73,11 +75,18 @@ export default function Levels() {
         mutateDelete(id);
     };
 
+    const filterLevels = useMemo(() => {
+        return levels?.filter((item) =>
+            langId ? item.languageId?.toLowerCase().includes(langId.toLowerCase()) : true
+        );
+    }, [levels, langId]);
+
+
     return (
         <Page title={"المستويات"} breadcrumbs={breadcrumbs} icon={<FaUsers fontSize={20} />}>
             <MaterialTable
                 heads={heads}
-                rows={levels}
+                rows={filterLevels}
                 selectable
                 isLoading={isLoading}
                 actions={['create', 'delete', 'details', 'edit']}
@@ -94,8 +103,11 @@ export default function Levels() {
                                 fullWidth
                                 label="ابحث عن لغة معينة"
                                 MenuProps={MenuProps}
-
-
+                                value={langId}
+                                onChange={(e) => setLangId(e.target.value)}
+                                endAdornment={
+                                    langId ? <IconButton onClick={() => setLangId('')}> <IoMdClose /> </IconButton> : null
+                                }
                             >
                                 {languages?.map((lang) => (
                                     <MenuItem key={lang.id} value={lang.id}>

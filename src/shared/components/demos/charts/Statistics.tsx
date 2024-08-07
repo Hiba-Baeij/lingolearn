@@ -81,7 +81,6 @@ export default function Statistics({ homeDto }: Props) {
 
     return (
         <Card sx={{ p: 2 }}>
-            <Typography color='primary' fontWeight={'bold'} variant="h6">الإحصائات اليومية</Typography>
 
             <Grid container spacing={{
                 xs: 5,

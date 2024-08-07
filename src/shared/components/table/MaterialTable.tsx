@@ -366,6 +366,14 @@ export default function EnhancedTable<DT>({ rows, heads, onMoreActions, actions,
                                                 actions && (
                                                     <TableCell align='center' sx={{ borderBottom: theme => theme.palette.mode === 'dark' ? theme.palette.divider : '#eeeeee6c' }}>
                                                         {
+                                                            onMoreActions &&
+                                                            <Tooltip title={'بنك الأسئلة'}>
+                                                                <IconButton size="small" color="inherit" onClick={() => onMoreActions(row.id)}>
+                                                                    <FaQuestion />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        }
+                                                        {
                                                             actions.includes('edit') && onEdit &&
                                                             <IconButton onClick={() => onEdit(row.id)} size="small" color="inherit" >
                                                                 <MdModeEdit />
@@ -376,14 +384,6 @@ export default function EnhancedTable<DT>({ rows, heads, onMoreActions, actions,
                                                             <IconButton onClick={() => onDelete([row.id])} size="small" color="error" >
                                                                 <RiDeleteBin6Line />
                                                             </IconButton>
-                                                        }
-                                                        {
-                                                            onMoreActions &&
-                                                            <Tooltip title={'بنك الأسئلة'}>
-                                                                <IconButton size="small" color="inherit" onClick={() => onMoreActions(row.id)}>
-                                                                    <FaQuestion />
-                                                                </IconButton>
-                                                            </Tooltip>
                                                         }
                                                     </TableCell>
                                                 )

@@ -1,5 +1,5 @@
 import { LanguageDto } from '@/api/languages/dto'
-import { Box, Button, Card, CardMedia, Checkbox, CircularProgress, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, ListItemIcon, ListItemText, Menu, MenuItem, Select, SelectChangeEvent, Skeleton, TextField, Tooltip, Typography } from '@mui/material'
+import { Box, Button, Card, CardMedia, Checkbox, CircularProgress, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, LinearProgress, ListItemIcon, ListItemText, Menu, MenuItem, Select, SelectChangeEvent, Skeleton, TextField, Tooltip, Typography } from '@mui/material'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { GET_ID_LANGUAGE_ENDPOINT, LanguagesActions, LANGUAGES_ENDPOINT } from '@/api/languages/actions'
@@ -106,83 +106,88 @@ export default function LanguageDetails() {
 
     return (
         <Page title={'تفاصيل اللغة'} breadcrumbs={breadcrumbs}>
-            <Card className='p-6'>
-                <h5>اللغة</h5>
-                <form onSubmit={onSubmit} className='grid grid-cols-3 gap-4 mt-4'>
-                    <div className="col-span-3 md:col-span-1 flex items-start gap-2">
-                        <Controller name='name' rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
-                            <TextField error={!!fieldState.error} fullWidth
-                                helperText={fieldState.error?.message}
-                                disabled
-                                {...field} id='name' label={"الاسم"}
-                            />
-                        }
-                        />
-
-                        <Button
-                            variant='contained'
-                            color="primary"
-                            id="basic-button"
-                            aria-controls={openMenu ? 'basic-menu' : undefined}
-                            aria-haspopup="true"
-                            aria-expanded={openMenu ? 'true' : undefined}
-                            onClick={handleClickMenu}
-                        >
-                            اختر لغة
-                        </Button>
-                        <Menu
-                            id="basic-menu"
-                            anchorEl={anchorEl}
-                            open={openMenu}
-                            onClose={handleCloseMenu}
-                            MenuListProps={{
-                                'aria-labelledby': 'basic-button',
-                            }}
-                            PaperProps={{
-                                style: {
-                                    maxHeight: ITEM_HEIGHT * 4.5,
-                                    width: '20ch',
-                                },
-                            }}
-                        >
-                            {
-                                availablelanguages?.map((lang, index) => (
-                                    <MenuItem key={index} onClick={() => { setValue('name', lang.value); handleCloseMenu() }}>{lang.value}</MenuItem>
-                                ))
+            <Card>
+                {isLoading ? <Box sx={{ width: '100%' }}>
+                    <LinearProgress color="primary" />
+                </Box> : null}
+                <div className='p-6'>
+                    <h5>اللغة</h5>
+                    <form onSubmit={onSubmit} className='grid grid-cols-3 gap-4 mt-4'>
+                        <div className="col-span-3 md:col-span-1 flex items-start gap-2">
+                            <Controller name='name' rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
+                                <TextField error={!!fieldState.error} fullWidth
+                                    helperText={fieldState.error?.message}
+                                    disabled
+                                    {...field} id='name' label={"الاسم"}
+                                />
                             }
-                        </Menu>
-                    </div>
-                    <div className="col-span-3 md:col-span-1">
-                        <Controller name='description' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
-                            <TextField error={!!fieldState.error} fullWidth
-                                helperText={fieldState.error?.message}
-                                {...field} id='description' label={"الوصف"}
                             />
-                        }
-                        />
-                    </div>
 
-                    <div className="col-span-3 md:col-span-1">
-                        {fileUrl ? (
-                            <div style={{ border: "1px solid #eee" }} className='w-full rounded-lg cursor-pointer flex justify-center items-center' onClick={handleIconClick} >
-                                <img src={fileUrl} className='w-[260px] h-[230px] rounded-lg object-cover' alt="Profile" />
-                            </div>
-                        ) : (
-                            <div style={{ border: "1px solid #eee" }} className='w-full rounded-lg cursor-pointer flex justify-center items-center' onClick={handleIconClick} >
-                                <img src='/non-image.svg' />
-                            </div>
-                        )}
-                    </div>
-                    <Box display={'flex'} flexWrap="wrap" justifyContent={{ lg: 'flex-start', md: "flex-start", xs: "center" }} width={'100%'} alignContent='center' gap={2}>
-                        <Button variant='contained' startIcon={<Edit />} type="submit">
-                            {
-                                isPending ? <CircularProgress color='inherit' size={24} /> : "تعديل"
+                            <Button
+                                variant='contained'
+                                color="primary"
+                                id="basic-button"
+                                aria-controls={openMenu ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={openMenu ? 'true' : undefined}
+                                onClick={handleClickMenu}
+                            >
+                                اختر لغة
+                            </Button>
+                            <Menu
+                                id="basic-menu"
+                                anchorEl={anchorEl}
+                                open={openMenu}
+                                onClose={handleCloseMenu}
+                                MenuListProps={{
+                                    'aria-labelledby': 'basic-button',
+                                }}
+                                PaperProps={{
+                                    style: {
+                                        maxHeight: ITEM_HEIGHT * 4.5,
+                                        width: '20ch',
+                                    },
+                                }}
+                            >
+                                {
+                                    availablelanguages?.map((lang, index) => (
+                                        <MenuItem key={index} onClick={() => { setValue('name', lang.value); handleCloseMenu() }}>{lang.value}</MenuItem>
+                                    ))
+                                }
+                            </Menu>
+                        </div>
+                        <div className="col-span-3 md:col-span-1">
+                            <Controller name='description' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
+                                <TextField error={!!fieldState.error} fullWidth
+                                    helperText={fieldState.error?.message}
+                                    {...field} id='description' label={"الوصف"}
+                                />
                             }
-                        </Button>
-                        <Button variant='outlined' color="secondary" startIcon={<IoMdArrowBack />} onClick={() => navigate('/languages')}>رجوع</Button>
-                    </Box>
+                            />
+                        </div>
 
-                </form>
+                        <div className="col-span-3 md:col-span-1">
+                            {fileUrl ? (
+                                <div style={{ border: "1px solid #eee" }} className='w-full rounded-lg cursor-pointer flex justify-center items-center' onClick={handleIconClick} >
+                                    <img src={fileUrl} className='w-[260px] h-[230px] rounded-lg object-cover' alt="Profile" />
+                                </div>
+                            ) : (
+                                <div style={{ border: "1px solid #eee" }} className='w-full rounded-lg cursor-pointer flex justify-center items-center' onClick={handleIconClick} >
+                                    <img src='/non-image.svg' />
+                                </div>
+                            )}
+                        </div>
+                        <Box display={'flex'} flexWrap="wrap" justifyContent={{ lg: 'flex-start', md: "flex-start", xs: "center" }} width={'100%'} alignContent='center' gap={2}>
+                            <Button variant='contained' startIcon={<Edit />} type="submit">
+                                {
+                                    isPending ? <CircularProgress color='inherit' size={24} /> : "تعديل"
+                                }
+                            </Button>
+                            <Button variant='outlined' color="secondary" startIcon={<IoMdArrowBack />} onClick={() => navigate('/languages')}>رجوع</Button>
+                        </Box>
+
+                    </form>
+                </div>
 
 
             </Card>
