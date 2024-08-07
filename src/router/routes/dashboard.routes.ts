@@ -78,6 +78,11 @@ export const DashboardRoutes: RouteRecord[] = [
         path: '/champions',
     },
     {
+        layout: DashboardLayout,
+        component: React.lazy(() => import('@/app/challenge/bankQuestions.page')),
+        path: '/champions/:id/questions-bank',
+    },
+    {
         layout: FullScreenLayout,
         component: React.lazy(() => import('@/app/not-found')),
         path: '/*',

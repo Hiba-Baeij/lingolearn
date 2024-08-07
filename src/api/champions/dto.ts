@@ -10,6 +10,15 @@ export interface Challenge {
   coverImageFile: File | null;
   imageUrl: string;
   coverImageUrl: string;
+}
+export interface BankQuestion {
+  bankQuestions: Questions[]
+}
+export interface Questions {
+  id: string;
+  text: string;
+  order: number;
+  challengeId: string;
   answers: Answer[];
 }
 

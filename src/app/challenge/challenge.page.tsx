@@ -17,6 +17,7 @@ import { Challenge } from '@/api/champions/dto';
 import { useFile } from '@/shared/hooks/useFile';
 import moment from 'moment';
 import { useLanguages } from '../languages/useLanguages';
+import BankQuestionForm from './components/BankQuestion';
 
 
 const breadcrumbs = [
@@ -37,6 +38,7 @@ export default function Challenges() {
     const queryClient = useQueryClient();
     const { getFileUrl } = useFile()
     const { getLanguage } = useLanguages();
+    const navigate = useNavigate();
 
     const { data: challenges, isLoading } = useQuery({
         queryKey: [CHALLENGES_ENDPOINT],
@@ -103,6 +105,7 @@ export default function Challenges() {
                 onDelete={(ids) => onDelete(ids)}
                 onEdit={(id) => { setChallengeId(id); setOpen(true) }}
                 onCreate={() => setOpen(true)}
+                onMoreActions={(id) => navigate(`/champions/${id}/questions-bank`)}
                 moreActions={
                     <>
                         <TextField sx={{ width: "500px" }} id='name' label={"ابحث عن اسم التحدي"} />

@@ -1,6 +1,6 @@
 import { Exam } from '@/api/exams/dto'
 import DialogForm from '@/shared/components/DialogForm'
-import { Checkbox, FormControl, FormHelperText, InputAdornment, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField } from '@mui/material'
+import { Checkbox, FormControl, FormHelperText, InputAdornment, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -31,32 +31,7 @@ const initiale = {
     coverImageFile: null,
     imageUrl: "",
     coverImageUrl: "",
-    answers: [
-        {
-            id: "",
-            text: "",
-            isCorrect: false,
-            order: 0
-        },
-        {
-            id: "",
-            text: "",
-            isCorrect: false,
-            order: 0
-        },
-        {
-            id: "",
-            text: "",
-            isCorrect: false,
-            order: 0
-        },
-        {
-            id: "",
-            text: "",
-            isCorrect: false,
-            order: 0
-        }
-    ]
+
 }
 
 export default function ChallengeForm({ open, setOpen, id, setId }: Props) {
@@ -76,26 +51,14 @@ export default function ChallengeForm({ open, setOpen, id, setId }: Props) {
         defaultValues: { ...initiale }
     });
 
-    const { fields, append } = useFieldArray({
-        control: control,
-        name: 'answers',
-        keyName: "_id"
-    });
 
     const { mutate, isPending } = useMutation({
         mutationFn: (v: Challenge) =>
             id
                 ? ChallengesActions.ModifyChallenge({
-                    ...v, id: id, answers: v.answers.map(answer => ({
-                        ...answer,
-                        order: +answer.order
-                    }))
+                    ...v, id: id
                 }) : ChallengesActions.AddChallenge({
-                    ...v,
-                    answers: v.answers.map(answer => ({
-                        ...answer,
-                        order: +answer.order
-                    }))
+                    ...v
                 }),
         onSuccess: () => {
             reset({ ...initiale })
@@ -191,7 +154,7 @@ export default function ChallengeForm({ open, setOpen, id, setId }: Props) {
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
                             {...field} id='startDate' label={"تاريخ البداية"}
-                            type="datetime-local"
+                            type="date"
                             InputLabelProps={{
                                 shrink: true
                             }}
@@ -206,7 +169,7 @@ export default function ChallengeForm({ open, setOpen, id, setId }: Props) {
                             helperText={fieldState.error?.message}
                             {...field} id='endDate' label={"تاريخ النهاية"}
                             onFocus={(e) => e.target.select()}
-                            type="datetime-local"
+                            type="date"
                             InputLabelProps={{
                                 shrink: true
                             }}
@@ -246,36 +209,6 @@ export default function ChallengeForm({ open, setOpen, id, setId }: Props) {
                     }] : []} name='coverImageUrl' label={'اختر غلاف للتحدي'}></FileInput>
                 </div>
 
-
-
-                {
-                    fields.map((field, index) => (
-                        <>
-                            <div key={field._id} className="col-span-6 flex items-center gap-5">
-                                <Controller control={control} name={`answers.${index}.isCorrect`} render={({ field }) => <Checkbox checked={!!field.value} onChange={e => field.onChange(e.target.checked)} />} />
-                                <Controller name={`answers.${index}.order`} control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
-                                    <TextField error={!!fieldState.error} className="w-[300px]"
-                                        helperText={fieldState.error?.message}
-                                        {...field} id='order' label={"ترتيب" + " " + indexText(index)}
-                                        type="number"
-                                        onFocus={(e) => e.target.select()}
-                                    />
-                                }
-                                />
-                                <Controller name={`answers.${index}.text`} control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
-                                    <TextField error={!!fieldState.error} fullWidth
-                                        helperText={fieldState.error?.message}
-                                        {...field} id='order' label={indexText(index)}
-                                        type="text"
-
-                                    />
-                                }
-                                />
-                            </div>
-
-                        </>
-                    ))
-                }
 
 
 

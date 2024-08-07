@@ -19,7 +19,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import { Button, Pagination, Skeleton } from '@mui/material';
-import { FaPlus } from "react-icons/fa6";
+import { FaPlus, FaQuestion } from "react-icons/fa6";
 import { useTranslation } from 'react-i18next';
 import { FaEllipsisVertical } from "react-icons/fa6";
 import { MdModeEdit } from "react-icons/md";
@@ -44,6 +44,7 @@ interface Props<DT> {
     pagination?: React.ReactNode,
     onDelete?: (id: any[]) => void,
     onEdit?: (id: any) => void,
+    onMoreActions?: (id: any) => void,
     onCreate?: () => void,
 
 }
@@ -231,7 +232,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         </Toolbar >
     );
 }
-export default function EnhancedTable<DT>({ rows, heads, actions, moreActions, dataReducer, details, isLoading, disabledCheckBox, pagination, total, onDelete, onEdit, onCreate, selectable }: Props<DT>) {
+export default function EnhancedTable<DT>({ rows, heads, onMoreActions, actions, moreActions, dataReducer, details, isLoading, disabledCheckBox, pagination, total, onDelete, onEdit, onCreate, selectable }: Props<DT>) {
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof DT>();
     const [selected, setSelected] = React.useState<string[]>([]);
@@ -364,12 +365,6 @@ export default function EnhancedTable<DT>({ rows, heads, actions, moreActions, d
                                             {
                                                 actions && (
                                                     <TableCell align='center' sx={{ borderBottom: theme => theme.palette.mode === 'dark' ? theme.palette.divider : '#eeeeee6c' }}>
-                                                        {/* {
-                                                            onEdit &&
-                                                            <IconButton size="small" color="inherit" >
-                                                                <IoEye />
-                                                            </IconButton>
-                                                        } */}
                                                         {
                                                             actions.includes('edit') && onEdit &&
                                                             <IconButton onClick={() => onEdit(row.id)} size="small" color="inherit" >
@@ -381,6 +376,14 @@ export default function EnhancedTable<DT>({ rows, heads, actions, moreActions, d
                                                             <IconButton onClick={() => onDelete([row.id])} size="small" color="error" >
                                                                 <RiDeleteBin6Line />
                                                             </IconButton>
+                                                        }
+                                                        {
+                                                            onMoreActions &&
+                                                            <Tooltip title={'بنك الأسئلة'}>
+                                                                <IconButton size="small" color="inherit" onClick={() => onMoreActions(row.id)}>
+                                                                    <FaQuestion />
+                                                                </IconButton>
+                                                            </Tooltip>
                                                         }
                                                     </TableCell>
                                                 )
