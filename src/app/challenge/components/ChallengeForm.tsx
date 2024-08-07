@@ -213,7 +213,7 @@ export default function ChallengeForm({ open, setOpen, id, setId }: Props) {
                         name: "صورة التحدي",
                         url: coverUrl as string,
                         type: getFileType(coverUrl as string) as FileType
-                    }] : []} name='coverImageUrl' label={'اختر غلاف للتحدي'}></FileInput>
+                    }] : []} name='coverImageFile' label={'اختر غلاف للتحدي'}></FileInput>
                 </div>
 
 
