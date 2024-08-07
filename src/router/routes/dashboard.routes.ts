@@ -26,11 +26,7 @@ export const DashboardRoutes: RouteRecord[] = [
         component: React.lazy(() => import('@/app/languages/languageDetails.page')),
         path: '/languages/:id',
     },
-    {
-        layout: DashboardLayout,
-        component: React.lazy(() => import('@/app/lessons/viewLesson.page')),
-        path: '/languages/view-lesson/:id',
-    },
+
     {
         layout: DashboardLayout,
         component: React.lazy(() => import('@/app/levels/levels.page')),
@@ -47,11 +43,7 @@ export const DashboardRoutes: RouteRecord[] = [
         component: React.lazy(() => import('@/app/lessons/lessons.page')),
         path: '/lessons',
     },
-    {
-        layout: DashboardLayout,
-        component: React.lazy(() => import('@/app/lessons/lessonDetails.page')),
-        path: '/lessons/:id',
-    },
+
     {
         layout: DashboardLayout,
         component: React.lazy(() => import('@/app/notifications/notifications.page')),

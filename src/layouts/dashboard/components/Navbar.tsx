@@ -27,6 +27,7 @@ import { ColorModeContext } from "@/app/hooks/useDarkMode";
 import { BreadCrumbItem } from "@/shared/types/navigation";
 import { GetDataLingoLearn, GetDecodedJwt, LogOut } from "@/shared/hooks/useAuth";
 import { MdLogout } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
@@ -54,7 +55,7 @@ export default function Navbar({
   };
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-
+  const navigate = useNavigate()
   const handleOpenUserMenu = () => {
     console.log('handler')
   };
@@ -257,7 +258,7 @@ export default function Navbar({
                   }}
 
                 >
-                  <MenuItem onClick={() => { LogOut(); handleClose }}>
+                  <MenuItem onClick={() => { LogOut(); navigate('/login'); handleClose() }}>
                     <ListItemIcon>
                       <MdLogout fontSize={24} />
                     </ListItemIcon>

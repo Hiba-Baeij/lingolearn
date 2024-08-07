@@ -80,6 +80,7 @@ export const IsLoggedIn = () => {
 export const LogOut = () => {
     localStorage.removeItem('access_token_lingolearn')
     localStorage.removeItem('refresh_token_lingolearn')
+
 }
 
 export const GetDecodedJwt = () => {
