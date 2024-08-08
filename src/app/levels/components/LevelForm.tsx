@@ -23,6 +23,7 @@ const initiale = {
     name: "",
     order: 0,
     description: "",
+    pointOpenBy: 0,
     languageId: "",
 }
 
@@ -78,7 +79,7 @@ export default function LevelForm({ open, setOpen, id, setId }: Props) {
     return (
         <DialogForm isForm onOpenChange={() => setOpen(false)} open={open} isLoading={isPending} title={id ? "تعديل المستوى" : "إضافة المستوى"} formProps={{ onSubmit: (e) => onSubmit(e) }} onClose={() => resetForm()} onReset={() => resetForm()}>
             <div className='grid grid-cols-2 gap-4'>
-                <div className="md:col-span-1 col-span-2">
+                <div className="col-span-2">
                     <Controller name='name' rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} control={control} render={({ field, fieldState }) =>
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
@@ -92,6 +93,16 @@ export default function LevelForm({ open, setOpen, id, setId }: Props) {
                         <TextField error={!!fieldState.error} fullWidth
                             helperText={fieldState.error?.message}
                             {...field} id='order' label={"الترتيب"}
+                            type="number"
+                        />
+                    }
+                    />
+                </div>
+                <div className="md:col-span-1 col-span-2">
+                    <Controller name='pointOpenBy' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
+                        <TextField error={!!fieldState.error} fullWidth
+                            helperText={fieldState.error?.message}
+                            {...field} id='pointOpenBy' label={"نقاط المستوى"}
                             type="number"
                         />
                     }

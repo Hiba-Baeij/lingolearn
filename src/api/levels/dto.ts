@@ -4,6 +4,7 @@ export interface LevelDto {
   name: string
   order: number
   description: string
+  pointOpenBy: number
   languageId: string
 }
 
@@ -13,6 +14,7 @@ export interface Levels {
   order: number;
   description: string;
   languageId: string;
+  pointOpenBy: number;
   lessonsCount: number;
 }
 export interface LevelDetails {
@@ -20,6 +22,7 @@ export interface LevelDetails {
   name: string;
   order: number;
   description: string;
+  pointOpenBy: number;
   languageId?: string;
   lessons: Lesson[];
 }

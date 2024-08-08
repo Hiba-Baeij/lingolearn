@@ -210,9 +210,9 @@ export default function LanguageDetails() {
                                             />
                                             <div className='flex justify-between items-center w-full mt-3'>
                                                 <h6 className='text-sm'>{lesson.name}</h6>
-                                                <Tooltip title='رؤية الدرس' >
+                                                {/* <Tooltip title='رؤية الدرس' >
                                                     <IconButton size='small' onClick={() => navigate(`/languages/view-lesson/${lesson.id}`)}> <FaEye /></IconButton>
-                                                </Tooltip>
+                                                </Tooltip> */}
                                             </div>
                                             <p className='mt-2 text-xs'>{lesson.description.length > 10 ? lesson.description.slice(0, 50) + "......" : lesson.description}</p>
 

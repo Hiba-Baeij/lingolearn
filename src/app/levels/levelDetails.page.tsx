@@ -97,6 +97,7 @@ export default function LevelDetails() {
         if (levelDto && id) {
             setValue('description', levelDto?.description)
             setValue('languageId', levelDto?.languageId as string)
+            setValue('pointOpenBy', levelDto?.pointOpenBy)
             setValue('name', levelDto?.name)
             setValue('order', +levelDto?.order)
 
@@ -168,6 +169,16 @@ export default function LevelDetails() {
                                     </>
                                 } />
                             </FormControl>
+                        </div>
+                        <div className="md:col-span-1 col-span-3">
+                            <Controller name='pointOpenBy' control={control} rules={{ required: { value: true, message: "هذا الحقل مطلوب" } }} render={({ field, fieldState }) =>
+                                <TextField error={!!fieldState.error} fullWidth
+                                    helperText={fieldState.error?.message}
+                                    {...field} id='pointOpenBy' label={"نقاط المستوى"}
+                                    type="number"
+                                />
+                            }
+                            />
                         </div>
                         <Box display={'flex'} flexWrap="wrap" justifyContent={{ lg: 'flex-start', md: "flex-start", xs: "center" }} width={'100%'} alignContent='center' gap={2}>
                             <Button variant='contained' startIcon={<Edit />} type="submit">
